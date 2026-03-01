@@ -3,6 +3,21 @@
 @tailwind utilities;
 
 body {
-  background-color: #0f172a; 
+  /* Point to the image you put in the public folder */
+  /*background-image: url('/images/bg.png');*/
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-color: #050505; /* Fallback color */
   color: #ffffff;
+  min-height: 100vh;
+}
+
+/* Hide scrollbar for the horizontal scrolling menus */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

@@ -1,0 +1,2 @@
+overrides:
+  '@trigslink/sdk-core': link:../trigslink-sdk/packages/sdk-core

@@ -3,12 +3,8 @@
 @tailwind utilities;
 
 body {
-  /* Point to the image you put in the public folder */
-  /*background-image: url('/images/bg.png');*/
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  background-color: #050505; /* Fallback color */
+  /* Deep, rich aesthetic blue */
+  background-color: #09101d; 
   color: #ffffff;
   min-height: 100vh;
 }

@@ -1,4 +1,4 @@
-# React + TypeScript + Vite ,
+# React + TypeScript + Vite ,SDA
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
@@ -21,7 +21,6 @@ export default defineConfig([
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
-      // Other configs...
 
       // Remove tseslint.configs.recommended and replace with this
       tseslint.configs.recommendedTypeChecked,

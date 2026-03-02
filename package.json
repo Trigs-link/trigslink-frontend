@@ -15,9 +15,11 @@
     "@tanstack/react-query": "^5.90.21",
     "@trigslink/sdk-core": "link:../trigslink-sdk/packages/sdk-core",
     "ethers": "^6.16.0",
+    "i18next": "^25.8.13",
     "lucide-react": "^0.575.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-i18next": "^16.5.4",
     "viem": "^2.46.3",
     "wagmi": "^3.5.0"
   },

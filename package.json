@@ -13,7 +13,7 @@
     "@reown/appkit": "^1.8.18",
     "@reown/appkit-adapter-wagmi": "^1.8.18",
     "@tanstack/react-query": "^5.90.21",
-    "@trigslink/sdk-core": "link:../trigslink-sdk/packages/sdk-core",
+    "@trigslink/sdk-core": "git+https://github.com/Trigs-link/trigslink-sdk.git#path:packages/sdk-core",
     "ethers": "^6.16.0",
     "i18next": "^25.8.13",
     "lucide-react": "^0.575.0",

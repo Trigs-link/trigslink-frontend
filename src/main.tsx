@@ -6,15 +6,16 @@ import './index.css'
 // Reown AppKit Imports
 import { createAppKit } from '@reown/appkit/react'
 import { WagmiProvider } from 'wagmi'
-import { mainnet, arbitrum, sepolia } from '@reown/appkit/networks'
+// 1. IMPORT `AppKitNetwork` type here:
+import { mainnet, arbitrum, sepolia, type AppKitNetwork } from '@reown/appkit/networks'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 
-// 1. Get your project ID from https://cloud.reown.com
-const projectId = 'YOUR_PROJECT_ID_HERE' // You can leave this as a placeholder while testing locally
+const projectId = 'YOUR_PROJECT_ID_HERE' 
 
-// 2. Set up Wagmi Adapter and Networks
-const networks = [mainnet, arbitrum, sepolia]
+// 2. APPLY THE EXACT TYPE HERE (Removes the red squiggly lines):
+const networks: [AppKitNetwork, ...AppKitNetwork[]] = [mainnet, arbitrum, sepolia]
+
 const wagmiAdapter = new WagmiAdapter({ projectId, networks })
 
 // 3. Configure your platform metadata

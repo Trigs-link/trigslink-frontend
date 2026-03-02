@@ -1,4 +1,4 @@
-import { Search, TrendingUp, ChevronDown } from 'lucide-react';
+import { Search, TrendingUp } from 'lucide-react';
 import MarketCard from './components/markets/MarketCard';
 import Navbar from './components/layout/Navbar';
 import CategoryNav from './components/layout/CategoryNav';

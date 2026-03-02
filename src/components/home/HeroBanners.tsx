@@ -7,32 +7,32 @@ export default function HeroBanners() {
       subtitle: "Track promises, policies, appointments, & more!",
       buttonText: "DASHBOARD",
       bgGradient: "bg-gradient-to-br from-[#2b6aff] to-[#00a3ff]",
-      // Placeholder for the image of Trump
-      imageContent: "🏛️" 
+      // Public domain portrait of Donald Trump
+      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Donald_Trump_official_portrait.jpg/600px-Donald_Trump_official_portrait.jpg" 
     },
     {
       title: "TikTok's future",
       subtitle: "What's next for TikTok in the United States?",
       buttonText: "MARKETS",
       bgGradient: "bg-gradient-to-br from-[#1ea2ff] to-[#00d4ff]",
-      // Placeholder for TikTok logo
-      imageContent: "📱"
+      // Unsplash TikTok logo
+      imageUrl: "https://images.unsplash.com/photo-1611605698335-8b1569810432?auto=format&fit=crop&q=80&w=600"
     },
     {
       title: "First 100 days",
       subtitle: "What will Trump accomplish in his most pivotal days?",
       buttonText: "MARKETS",
       bgGradient: "bg-gradient-to-br from-[#3b59ff] to-[#00bfff]",
-      // Placeholder for map/podium
-      imageContent: "🇺🇸"
+      // White house / Political backdrop
+      imageUrl: "https://images.unsplash.com/photo-1540910419892-4a36d2c3266c?auto=format&fit=crop&q=80&w=600"
     },
     {
       title: "Free to join",
       subtitle: "The world's largest prediction market.",
       buttonText: "GET STARTED",
       bgGradient: "bg-gradient-to-br from-[#0088ff] to-[#00e5ff]",
-      // Placeholder for Bitcoin
-      imageContent: "₿"
+      // Unsplash Bitcoin representation
+      imageUrl: "https://images.unsplash.com/photo-1518546305927-5a555bb7020d?auto=format&fit=crop&q=80&w=600"
     }
   ];
 
@@ -43,9 +43,20 @@ export default function HeroBanners() {
           key={i} 
           className={`${banner.bgGradient} rounded-2xl p-5 flex flex-col justify-between relative overflow-hidden h-[160px] cursor-pointer shadow-lg hover:shadow-blue-500/20 transition-all group`}
         >
-          {/* Background Image/Icon Placeholder (Right-aligned, clipped) */}
-          <div className="absolute -right-4 top-4 text-7xl opacity-80 group-hover:scale-110 transition-transform duration-500">
-            {banner.imageContent}
+          {/* Faded Background Image Container */}
+          <div 
+            className="absolute top-0 right-0 w-[60%] h-full opacity-90 group-hover:scale-105 transition-transform duration-700 ease-out"
+            style={{
+              // This CSS trick fades the left edge of the image to transparent so it blends perfectly into the blue card!
+              WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 40%)',
+              maskImage: 'linear-gradient(to right, transparent 0%, black 40%)'
+            }}
+          >
+            <img 
+              src={banner.imageUrl} 
+              alt={banner.title} 
+              className="w-full h-full object-cover object-center"
+            />
           </div>
 
           {/* Text Content */}
@@ -53,7 +64,7 @@ export default function HeroBanners() {
             <h2 className="text-xl font-bold text-white mb-1 leading-tight tracking-tight">
               {banner.title}
             </h2>
-            <p className="text-[12px] font-medium text-white/80 leading-snug line-clamp-2">
+            <p className="text-[12px] font-medium text-white/90 leading-snug line-clamp-2">
               {banner.subtitle}
             </p>
           </div>

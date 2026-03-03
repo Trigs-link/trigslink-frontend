@@ -42,7 +42,7 @@ export default function Navbar() {
 
           <div className="flex items-center gap-3">
             
-            {/* Conditional Rendering: Show Premium Badge if Connected, else show Glowing Connect Button */}
+            {/* Conditional Rendering: Show Premium Badge if Connected, else show Solid Connect Button */}
             {isConnected && address ? (
               
               /* --- PREMIUM CONNECTED PROFILE PILL --- */
@@ -66,10 +66,10 @@ export default function Navbar() {
 
             ) : (
               
-              /* --- GLOWING SIGN UP / CONNECT BUTTON --- */
+              /* --- SOLID SIGN UP / CONNECT BUTTON --- */
               <button 
                 onClick={() => open()} 
-                className="bg-gradient-to-r from-[#00c2ff] to-[#0066ff] text-white text-[13px] px-6 py-2 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(0,194,255,0.3)] hover:shadow-[0_0_20px_rgba(0,194,255,0.5)]"
+                className="bg-gradient-to-r from-[#00c2ff] to-[#0066ff] text-white text-[13px] px-6 py-2 rounded-xl font-bold transition-all hover:brightness-110"
               >
                 Sign Up
               </button>

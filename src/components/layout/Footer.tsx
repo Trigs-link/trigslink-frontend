@@ -84,7 +84,7 @@ export default function Footer() {
 
         </div>
 
-        {/* Beta / Validation laimer */}
+        {/* Beta / Validation Disclaimer */}
         <div className="mt-6 pt-5 text-[11px] font-medium text-[#4b5e7d] leading-relaxed max-w-[1400px] ">
           Trigslink is currently in a public Beta and active development phase. The platform, predictive models, and 15-second AI settlement protocols are provided for testing, evaluation, and educational purposes only. Trigslink is not currently a regulated financial exchange, and participation involves inherent technical and Web3-related risks. Markets and features are subject to change without notice. See our <a href="#" className="underline hover:text-[#8ba0c2] transition-colors">Terms of Service</a> & <a href="#" className="underline hover:text-[#8ba0c2] transition-colors">Privacy Policy</a>.
         </div>

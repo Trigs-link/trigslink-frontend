@@ -4,9 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  '@trigslink/sdk-core': link:../trigslink-sdk/packages/sdk-core
-
 importers:
 
   .:
@@ -21,8 +18,8 @@ importers:
         specifier: ^5.90.21
         version: 5.90.21(react@19.2.4)
       '@trigslink/sdk-core':
-        specifier: link:../trigslink-sdk/packages/sdk-core
-        version: link:../trigslink-sdk/packages/sdk-core
+        specifier: git+https://github.com/Trigs-link/trigslink-sdk.git#path:packages/sdk-core
+        version: git+https://git@github.com:Trigs-link/trigslink-sdk.git#2512114b43baf293a884f9bbd7b216341992e59c&path:packages/sdk-core(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       ethers:
         specifier: ^6.16.0
         version: 6.16.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
@@ -1090,6 +1087,10 @@ packages:
     resolution: {integrity: sha512-0Lu6y5t+tvlTJMTO7oh5NSpJfpg/5D41LlThfepTixPYkJ0sE2Jj0m0f6yYqujBwIXlId87e234+MxG3D3g7kg==}
     peerDependencies:
       react: ^18 || ^19
+
+  '@trigslink/sdk-core@git+https://git@github.com:Trigs-link/trigslink-sdk.git#2512114b43baf293a884f9bbd7b216341992e59c&path:packages/sdk-core':
+    resolution: {commit: 2512114b43baf293a884f9bbd7b216341992e59c, path: packages/sdk-core, repo: git@github.com:Trigs-link/trigslink-sdk.git, type: git}
+    version: 1.0.0
 
   '@types/babel__core@7.20.5':
     resolution: {integrity: sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA==}
@@ -4277,6 +4278,13 @@ snapshots:
     dependencies:
       '@tanstack/query-core': 5.90.20
       react: 19.2.4
+
+  '@trigslink/sdk-core@git+https://git@github.com:Trigs-link/trigslink-sdk.git#2512114b43baf293a884f9bbd7b216341992e59c&path:packages/sdk-core(bufferutil@4.1.0)(utf-8-validate@6.0.6)':
+    dependencies:
+      ethers: 6.16.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
 
   '@types/babel__core@7.20.5':
     dependencies:

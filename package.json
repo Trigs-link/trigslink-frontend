@@ -4,7 +4,6 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "preinstall": "if [ \"$VERCEL\" = \"1\" ]; then git config --global url.\"https://${GITHUB_TOKEN}@github.com/\".insteadOf \"https://github.com/\" && git config --global url.\"https://${GITHUB_TOKEN}@github.com/\".insteadOf \"ssh://git@github.com/\" && git config --global url.\"https://${GITHUB_TOKEN}@github.com/\".insteadOf \"git@github.com:\"; fi",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",

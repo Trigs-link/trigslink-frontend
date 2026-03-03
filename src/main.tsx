@@ -11,7 +11,7 @@ import { mainnet, arbitrum, sepolia, type AppKitNetwork } from '@reown/appkit/ne
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 
-const projectId = 'YOUR_PROJECT_ID_HERE' 
+const projectId = import.meta.env.VITE_REOWN_PROJECT_ID;
 
 // 2. APPLY THE EXACT TYPE HERE (Removes the red squiggly lines):
 const networks: [AppKitNetwork, ...AppKitNetwork[]] = [mainnet, arbitrum, sepolia]

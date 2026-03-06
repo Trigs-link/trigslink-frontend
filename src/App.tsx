@@ -3,7 +3,6 @@ import MarketCard from './components/markets/MarketCard';
 import Navbar from './components/layout/Navbar';
 import CategoryNav from './components/layout/CategoryNav';
 import HeroBanners from './components/home/HeroBanners';
-import FeaturedGraph from './components/home/FeaturedGraph';
 import Footer from './components/layout/Footer';
 import MarketSubNav from './components/markets/MarketSubNav';
 import GovernancePage from './components/home/GovernancePage';
@@ -38,7 +37,7 @@ export default function App() {
               <main className="max-w-[1600px] mx-auto px-4 py-6 flex flex-col gap-8">
                 
                 <HeroBanners />
-                <FeaturedGraph />
+                
                 <MarketSubNav />
 
                 {/* ROW 4: Market Cards Grid */}

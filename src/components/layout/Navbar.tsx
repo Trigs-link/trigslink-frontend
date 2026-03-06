@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
-import { Search, Menu, ChevronDown, Plus, LayoutList, Settings, AlertTriangle } from 'lucide-react';
+import { Search, Menu, ChevronDown, Plus, LayoutList, Settings, AlertTriangle, TrendingUp, Zap, Flame, Droplet, Clock } from 'lucide-react';
 import { useAppKit, useAppKitAccount, useAppKitProvider, useAppKitNetwork } from '@reown/appkit/react';
 import { BrowserProvider, Contract } from 'ethers';
 import SuggestMarketModal from './SuggestMarketModal';
 import { Link } from 'react-router-dom';
+
 // --- CONTRACT CONFIGURATION ---
 const TRIGS_TOKEN_ADDRESS = "0xc463bB636C67642870e2e82ebAdbd29e2C10eAFa";
 const TRIGS_TOKEN_ABI = ["function mintTestTokens() external"];
@@ -33,6 +34,18 @@ const JewelBox = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
+// --- HELPER: MINI 3D GLASS CONTAINER FOR SEARCH PILLS ---
+const MiniJewelBox = ({ children }: { children: React.ReactNode }) => (
+  <div className={`
+    flex items-center justify-center w-7 h-7 rounded-lg 
+    bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-md
+    border border-white/20 shadow-[0_2px_5px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.3)]
+    transition-transform duration-300 group-hover:scale-110
+  `}>
+    {children}
+  </div>
+);
+
 // --- HELPER: POLYMARKET-STYLE AVATAR GENERATOR ---
 const generateAvatar = (address: string) => {
   if (!address) return { background: '#111b33' };
@@ -49,15 +62,19 @@ export default function Navbar() {
   const { chainId } = useAppKitNetwork(); 
   
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMinting, setIsMinting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
 
   const isWrongNetwork = chainId !== 11155111 && chainId !== undefined;
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) setIsDropdownOpen(false);
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) setIsSearchOpen(false);
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -68,16 +85,13 @@ export default function Navbar() {
     try {
       setIsMinting(true);
       const ethersProvider = new BrowserProvider(walletProvider as any);
-      
       const network = await ethersProvider.getNetwork();
       if (Number(network.chainId) !== 11155111) {
         alert("The $TRIGS token is only available rn or operating on Testnet sepolia so select sepolia for miniting tokens to vote");
         return; 
       }
-
       const signer = await ethersProvider.getSigner();
       const trigsContract = new Contract(TRIGS_TOKEN_ADDRESS, TRIGS_TOKEN_ABI, signer);
-      
       const tx = await trigsContract.mintTestTokens();
       await tx.wait();
       alert("Successfully minted 1,000 $TRIGS! Check your wallet.");
@@ -96,12 +110,102 @@ export default function Navbar() {
           
           <div className="flex items-center gap-6 flex-1">
             <div className="flex items-center cursor-pointer shrink-0">
-              <a href="/"><img src="/images/full_logo.png" alt="Trigslink Logo" className="h-8 w-auto" /></a>
+              <Link to="/"><img src="/images/full_logo.png" alt="Trigslink Logo" className="h-8 w-auto" /></Link>
             </div>
 
-            <div className="hidden sm:flex max-w-[600px] w-full bg-[#111b33] rounded-lg items-center px-4 py-2 border border-white/5 hover:border-white/10 focus-within:border-[#00c2ff]/50 focus-within:bg-[#15203c] focus-within:ring-1 focus-within:ring-[#00c2ff]/50 transition-all shadow-inner">
-              <Search size={18} className="text-slate-400" />
-              <input type="text" placeholder="Search markets" className="bg-transparent border-none outline-none text-[13px] ml-3 w-full text-white placeholder-slate-500 font-medium"/>
+            {/* SEARCH BAR CONTAINER */}
+            <div className="relative hidden sm:flex max-w-[600px] w-full" ref={searchRef}>
+              <div 
+                className={`w-full bg-[#111b33] rounded-lg items-center px-4 py-2 border transition-all shadow-inner flex
+                  ${isSearchOpen ? 'border-[#00c2ff]/50 ring-1 ring-[#00c2ff]/50 bg-[#15203c]' : 'border-white/5 hover:border-white/10'}`}
+              >
+                <Search size={18} className="text-slate-400" />
+                <input 
+                  type="text" 
+                  placeholder="Search markets" 
+                  className="bg-transparent border-none outline-none text-[13px] ml-3 w-full text-white placeholder-slate-500 font-medium"
+                  onFocus={() => setIsSearchOpen(true)}
+                />
+              </div>
+
+              {/* THE NEW SEARCH DROPDOWN MENU */}
+              {isSearchOpen && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-[#1a233a] border border-white/10 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.8)] py-5 px-6 z-50 overflow-hidden">
+                  
+                  {/* BROWSE SECTION */}
+                  <div className="mb-7">
+                    <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-3 pl-1">Browse</p>
+                    <div className="flex flex-wrap gap-2.5">
+                      {/* Changed to rounded-xl (rectangular curved) to match inner box */}
+                      <button className="flex items-center gap-2.5 pr-4 pl-1.5 py-1.5 rounded-xl border border-white/10 bg-[#111b33]/80 hover:bg-white/10 text-[13px] font-semibold text-slate-300 hover:text-white transition-colors group shadow-sm">
+                        <MiniJewelBox><Zap size={14} className="text-white drop-shadow-sm" /></MiniJewelBox> New
+                      </button>
+                      <button className="flex items-center gap-2.5 pr-4 pl-1.5 py-1.5 rounded-xl border border-white/10 bg-[#111b33]/80 hover:bg-white/10 text-[13px] font-semibold text-slate-300 hover:text-white transition-colors group shadow-sm">
+                        <MiniJewelBox><TrendingUp size={14} className="text-white drop-shadow-sm" /></MiniJewelBox> Trending
+                      </button>
+                      <button className="flex items-center gap-2.5 pr-4 pl-1.5 py-1.5 rounded-xl border border-white/10 bg-[#111b33]/80 hover:bg-white/10 text-[13px] font-semibold text-slate-300 hover:text-white transition-colors group shadow-sm">
+                        <MiniJewelBox><Flame size={14} className="text-white drop-shadow-sm" /></MiniJewelBox> Popular
+                      </button>
+                      <button className="flex items-center gap-2.5 pr-4 pl-1.5 py-1.5 rounded-xl border border-white/10 bg-[#111b33]/80 hover:bg-white/10 text-[13px] font-semibold text-slate-300 hover:text-white transition-colors group shadow-sm">
+                        <MiniJewelBox><Droplet size={14} className="text-white drop-shadow-sm" /></MiniJewelBox> Liquid
+                      </button>
+                      <button className="flex items-center gap-2.5 pr-4 pl-1.5 py-1.5 rounded-xl border border-white/10 bg-[#111b33]/80 hover:bg-white/10 text-[13px] font-semibold text-slate-300 hover:text-white transition-colors group shadow-sm">
+                        <MiniJewelBox><Clock size={14} className="text-white drop-shadow-sm" /></MiniJewelBox> Ending Soon
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* TOPICS SECTION */}
+                  <div>
+                    <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-3 pl-1">Topics</p>
+                    <div className="grid grid-cols-2 gap-3">
+                      
+                      {/* Added visible borders and solid background to make them look like cards */}
+                      <button className="flex items-center gap-4 p-2.5 rounded-xl border border-white/10 bg-[#111b33]/60 hover:border-white/20 hover:bg-white/10 text-left group transition-all shadow-sm">
+                        <img src="https://images.unsplash.com/photo-1621416894569-0f39ed31d247?w=100&h=100&fit=crop" alt="Live Crypto" className="w-10 h-10 rounded-lg object-cover bg-black shadow-md group-hover:scale-105 transition-transform" />
+                        <span className="text-[14px] font-semibold text-slate-200 group-hover:text-white">Live Crypto</span>
+                      </button>
+                      
+                      <button className="flex items-center gap-4 p-2.5 rounded-xl border border-white/10 bg-[#111b33]/60 hover:border-white/20 hover:bg-white/10 text-left group transition-all shadow-sm">
+                        <img src="https://images.unsplash.com/photo-1540910419892-4a36d2c3266c?w=100&h=100&fit=crop" alt="Politics" className="w-10 h-10 rounded-lg object-cover bg-black shadow-md group-hover:scale-105 transition-transform" />
+                        <span className="text-[14px] font-semibold text-slate-200 group-hover:text-white">Politics</span>
+                      </button>
+
+                      <button className="flex items-center gap-4 p-2.5 rounded-xl border border-white/10 bg-[#111b33]/60 hover:border-white/20 hover:bg-white/10 text-left group transition-all shadow-sm">
+                        <img src="https://images.unsplash.com/photo-1582650817027-36e6328399a9?w=100&h=100&fit=crop" alt="Middle East" className="w-10 h-10 rounded-lg object-cover bg-black shadow-md group-hover:scale-105 transition-transform" />
+                        <span className="text-[14px] font-semibold text-slate-200 group-hover:text-white">Middle East</span>
+                      </button>
+
+                      <button className="flex items-center gap-4 p-2.5 rounded-xl border border-white/10 bg-[#111b33]/60 hover:border-white/20 hover:bg-white/10 text-left group transition-all shadow-sm">
+                        <img src="https://images.unsplash.com/photo-1518546305927-5a555bb7020d?w=100&h=100&fit=crop" alt="Crypto" className="w-10 h-10 rounded-lg object-cover bg-black shadow-md group-hover:scale-105 transition-transform" />
+                        <span className="text-[14px] font-semibold text-slate-200 group-hover:text-white">Crypto</span>
+                      </button>
+
+                      <button className="flex items-center gap-4 p-2.5 rounded-xl border border-white/10 bg-[#111b33]/60 hover:border-white/20 hover:bg-white/10 text-left group transition-all shadow-sm">
+                        <img src="https://images.unsplash.com/photo-1461896836934-ffe145ab64c1?w=100&h=100&fit=crop" alt="Sports" className="w-10 h-10 rounded-lg object-cover bg-black shadow-md group-hover:scale-105 transition-transform" />
+                        <span className="text-[14px] font-semibold text-slate-200 group-hover:text-white">Sports</span>
+                      </button>
+
+                      <button className="flex items-center gap-4 p-2.5 rounded-xl border border-white/10 bg-[#111b33]/60 hover:border-white/20 hover:bg-white/10 text-left group transition-all shadow-sm">
+                        <img src="https://images.unsplash.com/photo-1603190287605-e6ade32fa852?w=100&h=100&fit=crop" alt="Pop Culture" className="w-10 h-10 rounded-lg object-cover bg-black shadow-md group-hover:scale-105 transition-transform" />
+                        <span className="text-[14px] font-semibold text-slate-200 group-hover:text-white">Pop Culture</span>
+                      </button>
+
+                      <button className="flex items-center gap-4 p-2.5 rounded-xl border border-white/10 bg-[#111b33]/60 hover:border-white/20 hover:bg-white/10 text-left group transition-all shadow-sm">
+                        <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=100&h=100&fit=crop" alt="Tech" className="w-10 h-10 rounded-lg object-cover bg-black shadow-md group-hover:scale-105 transition-transform" />
+                        <span className="text-[14px] font-semibold text-slate-200 group-hover:text-white">Tech</span>
+                      </button>
+
+                      <button className="flex items-center gap-4 p-2.5 rounded-xl border border-white/10 bg-[#111b33]/60 hover:border-white/20 hover:bg-white/10 text-left group transition-all shadow-sm">
+                        <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=100&h=100&fit=crop" alt="AI" className="w-10 h-10 rounded-lg object-cover bg-black shadow-md group-hover:scale-105 transition-transform" />
+                        <span className="text-[14px] font-semibold text-slate-200 group-hover:text-white">AI</span>
+                      </button>
+                      
+                    </div>
+                  </div>
+
+                </div>
+              )}
             </div>
           </div>
 
@@ -120,7 +224,7 @@ export default function Navbar() {
               {isConnected && address ? (
                 <div className="flex items-center gap-4">
                   
-                  {/* 1. TACTILE 3D NETWORK PILL */}
+                  {/* TACTILE 3D NETWORK PILL */}
                   <button 
                     onClick={() => open({ view: 'Networks' })}
                     className={`
@@ -137,7 +241,7 @@ export default function Navbar() {
                     </span>
                   </button>
 
-                  {/* 2. GLASSMORPHIC 3D MINT BUTTON */}
+                  {/* GLASSMORPHIC 3D MINT BUTTON */}
                   <button 
                     onClick={handleMintTrigs}
                     disabled={isMinting || isWrongNetwork}
@@ -158,7 +262,7 @@ export default function Navbar() {
                     </div>
                   </button>
 
-                  {/* 3. PROFILE BUTTON & DROPDOWN */}
+                  {/* PROFILE BUTTON & DROPDOWN */}
                   <div className="relative pl-2" ref={dropdownRef}>
                     
                     <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="flex items-center gap-1.5 hover:opacity-80 transition-opacity outline-none">
@@ -176,7 +280,6 @@ export default function Navbar() {
                           </p>
                         </div>
                         
-                        {/* UNIFIED WHITE GLASS ICONS */}
                         <button onClick={() => { setIsModalOpen(true); setIsDropdownOpen(false); }} className="w-full text-left px-5 py-3 flex items-center gap-4 transition-colors group hover:bg-white/5">
                           <JewelBox>
                             <Plus size={16} className="text-white drop-shadow-md" />
@@ -189,7 +292,7 @@ export default function Navbar() {
                             <LayoutList size={14} className="text-white drop-shadow-md" />
                           </JewelBox>
                           <span className="text-[14px] font-semibold text-slate-300 group-hover:text-white transition-colors">My Proposals</span>
-                       </Link>
+                        </Link>
 
                         <button onClick={() => { open(); setIsDropdownOpen(false); }} className="w-full text-left px-5 py-3 flex items-center gap-4 transition-colors group hover:bg-white/5">
                           <JewelBox>

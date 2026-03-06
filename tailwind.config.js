@@ -4,8 +4,13 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-}
+// tailwind.config.js
+    theme: {
+      extend: {
+        keyframes: {
+          shimmer: {
+            '100%': { transform: 'translateX(200%)' },
+          }
+        }
+      }
+    }}

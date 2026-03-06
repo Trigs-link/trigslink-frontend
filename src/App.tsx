@@ -1,10 +1,12 @@
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import MarketCard from './components/markets/MarketCard';
 import Navbar from './components/layout/Navbar';
 import CategoryNav from './components/layout/CategoryNav';
 import HeroBanners from './components/home/HeroBanners';
 import FeaturedGraph from './components/home/FeaturedGraph';
 import Footer from './components/layout/Footer';
-import MarketSubNav from './components/markets/MarketSubNav'; // <-- Import the new component
+import MarketSubNav from './components/markets/MarketSubNav';
+import GovernancePage from './components/home/GovernancePage';
 
 export default function App() {
   const mockMarkets = [
@@ -19,47 +21,60 @@ export default function App() {
   ];
 
   return (
-    <div className="min-h-screen font-sans text-slate-200"> 
-      
-      {/* 1. Global Navigation */}
-      <Navbar />
-      <CategoryNav />
-
-      {/* 2. Main Layout Area */}
-      <main className="max-w-[1600px] mx-auto px-4 py-6 flex flex-col gap-8">
+    <Router>
+      {/* The main wrapper keeps the dark theme consistent across all pages */}
+      <div className="min-h-screen font-sans text-slate-200 bg-[#0b1426]"> 
         
-        <HeroBanners />
-        <FeaturedGraph />
+        {/* 1. Global Navigation - Stays visible on all routes */}
+        <Navbar />
 
-        {/* Secondary Market Sub-Nav Component */}
-        <MarketSubNav />
+        {/* 2. Route Handling Area */}
+        <Routes>
+          
+          {/* --- HOME PAGE ROUTE --- */}
+          <Route path="/" element={
+            <>
+              <CategoryNav />
+              <main className="max-w-[1600px] mx-auto px-4 py-6 flex flex-col gap-8">
+                
+                <HeroBanners />
+                <FeaturedGraph />
+                <MarketSubNav />
 
-        {/* ROW 4: Market Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-          {mockMarkets.map((market) => (
-            <MarketCard 
-              key={market.id}
-              marketId={market.id}
-              category={market.category}
-              question={market.question}
-              volume={market.volume}
-              yesProb={market.yesProb}
-            />
-          ))}
-        </div>
+                {/* ROW 4: Market Cards Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+                  {mockMarkets.map((market) => (
+                    <MarketCard 
+                      key={market.id}
+                      marketId={market.id}
+                      category={market.category}
+                      question={market.question}
+                      volume={market.volume}
+                      yesProb={market.yesProb}
+                    />
+                  ))}
+                </div>
 
-        {/* THE NEW "SHOW MORE" UI SECTION */}
-        <div className="flex flex-col items-center mt-10 mb-8 gap-4">
-          <button className="flex items-center gap-1.5 px-6 py-2.5 rounded-full border border-white/10 bg-[#111827] hover:bg-[#1f2937] text-[#94a3b8] hover:text-white transition-all text-[13px] font-bold shadow-lg mt-1">
-            Show more markets           
-          </button>
-        </div>
+                {/* THE NEW "SHOW MORE" UI SECTION */}
+                <div className="flex flex-col items-center mt-10 mb-8 gap-4">
+                  <button className="flex items-center gap-1.5 px-6 py-2.5 rounded-full border border-white/10 bg-[#111827] hover:bg-[#1f2937] text-[#94a3b8] hover:text-white transition-all text-[13px] font-bold shadow-lg mt-1">
+                    Show more markets           
+                  </button>
+                </div>
 
-      </main>
+              </main>
+            </>
+          } />
 
-      {/* 3. The Mega Footer */}
-      <Footer />
-      
-    </div>
+          {/* --- GOVERNANCE PAGE ROUTE --- */}
+          <Route path="/governance" element={<GovernancePage />} />
+
+        </Routes>
+
+        {/* 3. The Mega Footer - Stays visible on all routes */}
+        <Footer />
+        
+      </div>
+    </Router>
   );
 }

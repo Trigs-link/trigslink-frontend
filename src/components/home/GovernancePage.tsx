@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAppKitProvider, useAppKitAccount } from '@reown/appkit/react';
 import { BrowserProvider, Contract, formatEther } from 'ethers';
 import { ThumbsUp, ThumbsDown, Clock, CheckCircle, XCircle, PlayCircle, Loader2 } from 'lucide-react';

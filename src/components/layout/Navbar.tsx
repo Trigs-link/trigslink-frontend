@@ -11,7 +11,7 @@ const TRIGS_TOKEN_ABI = [
   "function mintTestTokens() external"
 ];
 
-// Add TypeScript declaration for the web component
+// Add TypeScript declaration for the web component so your IDE doesn't complain
 declare global {
   namespace JSX {
     interface IntrinsicElements {
@@ -31,6 +31,7 @@ export default function Navbar() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // Close dropdown if clicked outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -50,10 +51,11 @@ export default function Navbar() {
       
       const ethersProvider = new BrowserProvider(walletProvider as any);
       
-      // --- THE NETWORK SAFETY CHECK ---
+      // --- THE NEW NETWORK SAFETY CHECK WITH CUSTOM NOTIFICATION ---
       const network = await ethersProvider.getNetwork();
       if (Number(network.chainId) !== 11155111) {
-        alert("⚠️ Wrong Network Detected\n\nThe $TRIGS token is currently only operating on the Sepolia Testnet. \n\nPlease select Sepolia using the network button to mint tokens and vote.");
+        // EXACT MESSAGE REQUESTED
+        alert("The $TRIGS token is only available rn or operating on Testnet sepolia so select sepolia for miniting tokens to vote");
         return; 
       }
 
@@ -85,6 +87,7 @@ export default function Navbar() {
       <nav className="border-b border-white/5 bg-[#0b1426]/80 backdrop-blur-md sticky top-0 z-50">   
         <div className="max-w-[1600px] mx-auto px-4 h-16 flex items-center justify-between gap-4">
           
+          {/* Left Side: Brand Logo + Search Bar */}
           <div className="flex items-center gap-6 flex-1">
             <div className="flex items-center cursor-pointer shrink-0">
               <a href="/">
@@ -106,6 +109,7 @@ export default function Navbar() {
             </div>
           </div>
 
+          {/* Right Side: Navigation Links + Auth Buttons */}
           <div className="flex items-center gap-6 justify-end">
             
             <div className="hidden lg:flex items-center gap-5 text-[13px] font-semibold text-slate-400">
@@ -120,14 +124,19 @@ export default function Navbar() {
               
               {isConnected && address ? (
                 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   
-                  {/* APPKIT NETWORK SWITCHER */}
-                  <div className="hidden sm:block hover:scale-105 transition-transform duration-200">
-                    <appkit-network-button />
+                  {/* 1. UPGRADED GLOWING APPKIT NETWORK SWITCHER */}
+                  <div className="relative group hidden sm:block hover:scale-105 transition-transform duration-300">
+                    {/* The animated glowing aura behind the button */}
+                    <div className="absolute -inset-0.5 bg-gradient-to-r from-[#00c2ff] to-indigo-500 rounded-full blur opacity-40 group-hover:opacity-80 transition duration-300"></div>
+                    {/* The actual button sitting on top */}
+                    <div className="relative">
+                      <appkit-network-button />
+                    </div>
                   </div>
 
-                  {/* GLASSMORPHIC 3D MINT BUTTON */}
+                  {/* 2. GLASSMORPHIC 3D MINT BUTTON */}
                   <button 
                     onClick={handleMintTrigs}
                     disabled={isMinting}
@@ -156,12 +165,12 @@ export default function Navbar() {
                     </div>
                   </button>
 
-                  {/* PROFILE DROPDOWN CONTAINER */}
+                  {/* 3. PROFILE DROPDOWN CONTAINER */}
                   <div className="relative" ref={dropdownRef}>
                     
                     <button 
                       onClick={() => setIsDropdownOpen(!isDropdownOpen)} 
-                      className="flex items-center gap-2.5 bg-[#111b33] hover:bg-[#15203c] border border-white/10 px-2.5 py-1.5 rounded-full transition-all group"
+                      className="flex items-center gap-2.5 bg-[#111b33] hover:bg-[#15203c] border border-white/10 px-2.5 py-1.5 rounded-full transition-all group shadow-md hover:shadow-lg"
                     >
                       <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-[#00c2ff] to-indigo-500 shadow-inner flex items-center justify-center">
                         <Wallet size={12} className="text-white/80" />

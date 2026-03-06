@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Search, Menu, ChevronDown, Wallet, PlusCircle, ClipboardList } from 'lucide-react';
-import { useAppKit, useAppKitAccount, useAppKitProvider } from '@reown/appkit/react';
+import { useState, useRef, useEffect } from 'react';
+import { Search, Menu, ChevronDown, PlusCircle, ClipboardList, Settings, AlertTriangle } from 'lucide-react';
+import { useAppKit, useAppKitAccount, useAppKitProvider, useAppKitNetwork } from '@reown/appkit/react';
 import { BrowserProvider, Contract } from 'ethers';
 import SuggestMarketModal from './SuggestMarketModal';
 
@@ -11,19 +11,41 @@ const TRIGS_TOKEN_ABI = [
   "function mintTestTokens() external"
 ];
 
-// Add TypeScript declaration for the web component so your IDE doesn't complain
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      'appkit-network-button': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
-    }
-  }
-}
+// --- HELPER: CUSTOM ETHEREUM ICON ---
+const EthIcon = ({ size = 14, className = "" }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 32 32" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+  >
+    <path d="M15.925 23.969L15.812 24.032V31.786L15.925 32.115L23.951 20.803L15.925 23.969Z" fill="currentColor" fillOpacity="0.8"/>
+    <path d="M15.925 23.969L7.894 20.803L15.925 32.115V23.969Z" fill="currentColor" fillOpacity="0.5"/>
+    <path d="M15.925 21.325L15.877 21.38V23.705L15.925 23.755L23.957 19.387L15.925 21.325Z" fill="currentColor" fillOpacity="0.8"/>
+    <path d="M15.925 21.325L7.894 19.387L15.925 23.755V21.325Z" fill="currentColor" fillOpacity="0.5"/>
+    <path d="M15.925 0L15.753 0.584V18.665L15.925 18.837L23.957 15.22L15.925 0Z" fill="currentColor" fillOpacity="0.8"/>
+    <path d="M15.925 0L7.894 15.22L15.925 18.837V0Z" fill="currentColor" fillOpacity="0.5"/>
+  </svg>
+);
+
+// --- HELPER: POLYMARKET-STYLE AVATAR GENERATOR ---
+const generateAvatar = (address: string) => {
+  if (!address) return { background: '#111b33' };
+  const h1 = parseInt(address.slice(2, 6), 16) % 360;
+  const h2 = (h1 + 50) % 360;
+  const h3 = (h2 + 70) % 360;
+  return { 
+    background: `linear-gradient(135deg, hsl(${h1}, 90%, 65%), hsl(${h2}, 90%, 60%), hsl(${h3}, 90%, 55%))` 
+  };
+};
 
 export default function Navbar() {
   const { open } = useAppKit();
   const { address, isConnected } = useAppKitAccount();
   const { walletProvider } = useAppKitProvider('eip155');
+  const { chainId } = useAppKitNetwork(); 
   
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMinting, setIsMinting] = useState(false);
@@ -31,7 +53,9 @@ export default function Navbar() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown if clicked outside
+  // Check if user is on Sepolia (Chain ID: 11155111)
+  const isWrongNetwork = chainId !== 11155111 && chainId !== undefined;
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -51,10 +75,8 @@ export default function Navbar() {
       
       const ethersProvider = new BrowserProvider(walletProvider as any);
       
-      // --- THE NEW NETWORK SAFETY CHECK WITH CUSTOM NOTIFICATION ---
       const network = await ethersProvider.getNetwork();
       if (Number(network.chainId) !== 11155111) {
-        // EXACT MESSAGE REQUESTED
         alert("The $TRIGS token is only available rn or operating on Testnet sepolia so select sepolia for miniting tokens to vote");
         return; 
       }
@@ -66,7 +88,6 @@ export default function Navbar() {
       const tx = await trigsContract.mintTestTokens();
       
       await tx.wait();
-      console.log("Tokens Minted! Hash:", tx.hash);
       alert("Successfully minted 1,000 $TRIGS! Check your wallet.");
       
     } catch (error: any) {
@@ -120,26 +141,33 @@ export default function Navbar() {
               <span className="hover:text-white cursor-pointer transition-colors">Markets</span>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               
               {isConnected && address ? (
                 
                 <div className="flex items-center gap-4">
                   
-                  {/* 1. UPGRADED GLOWING APPKIT NETWORK SWITCHER */}
-                  <div className="relative group hidden sm:block hover:scale-105 transition-transform duration-300">
-                    {/* The animated glowing aura behind the button */}
-                    <div className="absolute -inset-0.5 bg-gradient-to-r from-[#00c2ff] to-indigo-500 rounded-full blur opacity-40 group-hover:opacity-80 transition duration-300"></div>
-                    {/* The actual button sitting on top */}
-                    <div className="relative">
-                      <appkit-network-button />
-                    </div>
-                  </div>
+                  {/* 1. SLEEK, MINIMALIST NETWORK TAG WITH ETH ICON */}
+                  <button 
+                    onClick={() => open({ view: 'Networks' })}
+                    className={`
+                      hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg transition-colors duration-200
+                      ${isWrongNetwork 
+                        ? 'bg-red-500/10 text-red-400 hover:bg-red-500/20' 
+                        : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'
+                      }
+                    `}
+                  >
+                    {isWrongNetwork ? <AlertTriangle size={14} /> : <EthIcon size={14} />}
+                    <span className="text-[12px] font-medium tracking-wide">
+                      {isWrongNetwork ? 'Wrong Network' : 'Sepolia'}
+                    </span>
+                  </button>
 
                   {/* 2. GLASSMORPHIC 3D MINT BUTTON */}
                   <button 
                     onClick={handleMintTrigs}
-                    disabled={isMinting}
+                    disabled={isMinting || isWrongNetwork}
                     className={`
                       relative group hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-[13px] text-white
                       bg-gradient-to-b from-white/10 to-[#111b33]/50 backdrop-blur-md 
@@ -147,13 +175,13 @@ export default function Navbar() {
                       shadow-[0_4px_12px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.2)] 
                       hover:shadow-[0_6px_20px_rgba(0,194,255,0.25),inset_0_1px_1px_rgba(255,255,255,0.4)]
                       transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0
-                      ${isMinting ? 'opacity-60 cursor-not-allowed transform-none' : ''}
+                      ${isMinting || isWrongNetwork ? 'opacity-50 cursor-not-allowed transform-none hover:border-white/20 hover:shadow-none' : ''}
                     `}
                   >
                     <img 
                       src="/images/coin.png" 
                       alt="$TRIGS" 
-                      className={`w-7 h-7 object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] ${isMinting ? 'animate-pulse' : ''}`} 
+                      className={`w-6 h-6 object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] ${isMinting ? 'animate-pulse' : ''}`} 
                     />
                     
                     <span className="tracking-wide">
@@ -165,27 +193,23 @@ export default function Navbar() {
                     </div>
                   </button>
 
-                  {/* 3. PROFILE DROPDOWN CONTAINER */}
-                  <div className="relative" ref={dropdownRef}>
+                  {/* 3. POLYMARKET-STYLE PROFILE BUTTON */}
+                  <div className="relative pl-2" ref={dropdownRef}>
                     
                     <button 
                       onClick={() => setIsDropdownOpen(!isDropdownOpen)} 
-                      className="flex items-center gap-2.5 bg-[#111b33] hover:bg-[#15203c] border border-white/10 px-2.5 py-1.5 rounded-full transition-all group shadow-md hover:shadow-lg"
+                      className="flex items-center gap-1.5 hover:opacity-80 transition-opacity outline-none"
                     >
-                      <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-[#00c2ff] to-indigo-500 shadow-inner flex items-center justify-center">
-                        <Wallet size={12} className="text-white/80" />
-                      </div>
-                      
-                      <span className="text-[13px] font-bold text-white tracking-wide">
-                        {`${address.slice(0, 4)}...${address.slice(-4)}`}
-                      </span>
-                      
-                      <ChevronDown size={14} className={`text-slate-500 group-hover:text-white mr-1 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                      <div 
+                        className="w-[34px] h-[34px] rounded-full shadow-md"
+                        style={generateAvatar(address)}
+                      />
+                      <ChevronDown size={16} className={`text-slate-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
                     </button>
 
                     {/* Dropdown Menu */}
                     {isDropdownOpen && (
-                      <div className="absolute right-0 mt-2 w-56 bg-[#1a233a] border border-white/10 rounded-xl shadow-2xl py-2 z-50 flex flex-col overflow-hidden">
+                      <div className="absolute right-0 mt-3 w-56 bg-[#1a233a] border border-white/10 rounded-xl shadow-2xl py-2 z-50 flex flex-col overflow-hidden">
                         
                         <div className="px-4 py-3 border-b border-white/5 mb-1 bg-[#111b33]/50">
                           <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Connected Wallet</p>
@@ -218,7 +242,7 @@ export default function Navbar() {
                           }}
                           className="w-full text-left px-4 py-2.5 text-[13px] font-medium text-slate-300 hover:text-white hover:bg-white/5 flex items-center gap-3 transition-colors"
                         >
-                          <Wallet size={16} className="text-slate-400" />
+                          <Settings size={16} className="text-slate-400" />
                           Wallet Settings
                         </button>
 
@@ -231,7 +255,7 @@ export default function Navbar() {
                 
                 <button 
                   onClick={() => open()} 
-                  className="bg-gradient-to-r from-[#00c2ff] to-[#0066ff] text-white text-[13px] px-6 py-2 rounded-xl font-bold transition-all hover:brightness-110 shadow-lg"
+                  className="bg-gradient-to-r from-[#00c2ff] to-[#0066ff] text-white text-[14px] px-6 py-2.5 rounded-lg font-bold transition-all hover:brightness-110 shadow-lg"
                 >
                   Sign Up
                 </button>

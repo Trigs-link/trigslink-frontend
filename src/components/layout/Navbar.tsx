@@ -3,7 +3,7 @@ import { Search, Menu, ChevronDown, Plus, LayoutList, Settings, AlertTriangle } 
 import { useAppKit, useAppKitAccount, useAppKitProvider, useAppKitNetwork } from '@reown/appkit/react';
 import { BrowserProvider, Contract } from 'ethers';
 import SuggestMarketModal from './SuggestMarketModal';
-
+import { Link } from 'react-router-dom';
 // --- CONTRACT CONFIGURATION ---
 const TRIGS_TOKEN_ADDRESS = "0xc463bB636C67642870e2e82ebAdbd29e2C10eAFa";
 const TRIGS_TOKEN_ABI = ["function mintTestTokens() external"];
@@ -111,7 +111,7 @@ export default function Navbar() {
               <span className="hover:text-white cursor-pointer transition-colors">Ranks</span>
               <span className="hover:text-white cursor-pointer transition-colors">Activity</span>
               <span className="hover:text-white cursor-pointer transition-colors">Sports</span>
-              <a href="/governance" className="hover:text-white cursor-pointer transition-colors">Governance</a>
+              <Link to="/governance" className="hover:text-white cursor-pointer transition-colors">Governance</Link>
               <span className="hover:text-white cursor-pointer transition-colors">Markets</span>
             </div>
 
@@ -184,12 +184,12 @@ export default function Navbar() {
                           <span className="text-[14px] font-semibold text-slate-300 group-hover:text-white transition-colors">Suggest Market</span>
                         </button>
 
-                        <a href="/governance?tab=my-proposals" className="w-full text-left px-5 py-3 flex items-center gap-4 transition-colors group hover:bg-white/5">
+                        <Link to="/governance?tab=my-proposals" className="w-full text-left px-5 py-3 flex items-center gap-4 transition-colors group hover:bg-white/5">
                           <JewelBox>
                             <LayoutList size={14} className="text-white drop-shadow-md" />
                           </JewelBox>
                           <span className="text-[14px] font-semibold text-slate-300 group-hover:text-white transition-colors">My Proposals</span>
-                        </a>
+                       </Link>
 
                         <button onClick={() => { open(); setIsDropdownOpen(false); }} className="w-full text-left px-5 py-3 flex items-center gap-4 transition-colors group hover:bg-white/5">
                           <JewelBox>

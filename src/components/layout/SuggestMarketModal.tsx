@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { X, FileText, ListChecks, HelpCircle, Calendar, AlertTriangle, Loader2 } from 'lucide-react';
-import { useAppKitProvider } from '@reown/appkit/react';
+// 🆕 Added 'Wallet' icon for the disconnected state
+import { X, FileText, ListChecks, HelpCircle, Calendar, AlertTriangle, Loader2, Wallet } from 'lucide-react';
+// 🆕 Added useAppKitAccount and useAppKit to check status and trigger the connect modal
+import { useAppKitProvider, useAppKitAccount, useAppKit } from '@reown/appkit/react';
 import { BrowserProvider, Contract, parseEther } from 'ethers';
 
 // --- HELPER: 3D FACETED ETHEREUM GEM (For Sepolia) ---
@@ -31,6 +33,8 @@ interface SuggestMarketModalProps {
 
 export default function SuggestMarketModal({ isOpen, onClose }: SuggestMarketModalProps) {
   const { walletProvider } = useAppKitProvider('eip155');
+  const { isConnected } = useAppKitAccount(); // 👈 Check if they are connected
+  const { open } = useAppKit();               // 👈 Function to open Reown wallet connect
   
   const [question, setQuestion] = useState("");
   const [dataSource, setDataSource] = useState(""); 
@@ -94,88 +98,121 @@ export default function SuggestMarketModal({ isOpen, onClose }: SuggestMarketMod
           </button>
         </div>
 
-        <form onSubmit={handlePropose} className="p-6 space-y-6">
-          
-          {/* QUESTION FIELD - SPORTS EXAMPLE */}
-          <div className="space-y-2">
-            <label className="text-[13px] font-bold text-slate-300 flex items-center gap-2">
-              <FileText size={15} className="text-slate-400" /> Market Question
-            </label>
-            <textarea 
-              value={question} 
-              onChange={(e) => setQuestion(e.target.value)} 
-              placeholder="e.g., Will Real Madrid win the UEFA Champions League Final in 2026?"
-              className="w-full bg-[#050a15] border border-white/10 focus:border-[#00c2ff]/50 focus:ring-1 focus:ring-[#00c2ff]/50 rounded-xl p-4 text-[14px] text-white placeholder-slate-600 outline-none h-20 transition-all resize-none shadow-inner" 
-              required 
-            />
-          </div>
-
-          {/* RESOLUTION RULES FIELD - SPORTS EXAMPLE */}
-          <div className="space-y-2">
-            <label className="text-[13px] font-bold text-slate-300 flex items-center gap-2">
-              <ListChecks size={15} className="text-slate-400" /> Resolution Rules & Source
-            </label>
-            <textarea 
-              value={dataSource} 
-              onChange={(e) => setDataSource(e.target.value)} 
-              placeholder="e.g., Resolves YES if Real Madrid wins the final match. Resolves NO if they lose or fail to reach the final. Source: https://www.uefa.com/uefachampionsleague/"
-              className="w-full bg-[#050a15] border border-white/10 focus:border-[#00c2ff]/50 focus:ring-1 focus:ring-[#00c2ff]/50 rounded-xl p-4 text-[14px] text-white placeholder-slate-600 outline-none h-28 transition-all resize-none shadow-inner" 
-              required 
-            />
-          </div>
-
-          {/* DATE PICKER */}
-          <div className="space-y-2">
-            <label className="text-[13px] font-bold text-slate-300 flex items-center gap-2">
-              <Calendar size={15} className="text-slate-400" /> Market End Date
-            </label>
-            <input 
-              type="datetime-local" 
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="w-full bg-[#050a15] border border-white/10 focus:border-[#00c2ff]/50 focus:ring-1 focus:ring-[#00c2ff]/50 rounded-xl p-3.5 text-[14px] text-white outline-none transition-all shadow-inner [color-scheme:dark]"
-              required
-            />
-          </div>
-
-          {/* 🚨 UPDATED ANTI-SPAM WARNING BOX */}
-          <div className="bg-gradient-to-r from-[#ff3b5c]/10 to-transparent border border-[#ff3b5c]/20 rounded-xl p-4 flex gap-3 items-start shadow-[inset_0_1px_4px_rgba(255,59,92,0.1)]">
-            <AlertTriangle size={18} className="text-[#ff3b5c] shrink-0 mt-0.5" />
-            <p className="text-[12px] text-slate-300 leading-relaxed font-medium">
-              <strong className="text-[#ff3b5c] font-bold tracking-wide">ANTI-SPAM WARNING:</strong> Ensure your question is objective and the data source is verifiable. If the decentralized oracle nodes or community votes flag this market as spam, <span className="text-white font-bold">your {REQUIRED_STAKE_ETH} ETH stake will be slashed</span> and lost.
+        {/* 🚀 CONDITIONAL RENDERING: Check if wallet is connected */}
+        {!isConnected ? (
+          <div className="p-10 flex flex-col items-center justify-center text-center">
+            
+            {/* Glowing Wallet Icon */}
+            <div className="w-16 h-16 bg-gradient-to-br from-[#00c2ff]/20 to-blue-600/10 rounded-full flex items-center justify-center border border-[#00c2ff]/20 shadow-[0_0_30px_rgba(0,194,255,0.15)] mb-6">
+              <Wallet size={28} className="text-[#00c2ff] drop-shadow-lg" />
+            </div>
+            
+            <h3 className="text-xl font-black text-white mb-3">Wallet Required</h3>
+            
+            <p className="text-slate-400 text-[14px] leading-relaxed mb-8 max-w-[280px]">
+              You must connect your Web3 wallet to stake the required {REQUIRED_STAKE_ETH} ETH and propose a new market.
             </p>
+            
+            {/* 3D Connect Wallet Button */}
+            <button 
+              onClick={() => open()}
+              className={`
+                w-full py-3.5 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300
+                bg-gradient-to-b from-[#1a233a] to-[#0b1426]
+                border-t border-t-white/20 border-b border-b-black/80 border-l border-l-white/5 border-r border-r-white/5
+                shadow-[0_6px_15px_rgba(0,0,0,0.6),inset_0_2px_4px_rgba(255,255,255,0.05)]
+                hover:brightness-110 active:translate-y-1 active:shadow-inner
+              `}
+            >
+              <span className="text-white font-extrabold text-[15px] tracking-wide drop-shadow-md">
+                Connect Wallet
+              </span>
+            </button>
+
           </div>
+        ) : (
+          <form onSubmit={handlePropose} className="p-6 space-y-6">
+            
+            {/* QUESTION FIELD */}
+            <div className="space-y-2">
+              <label className="text-[13px] font-bold text-slate-300 flex items-center gap-2">
+                <FileText size={15} className="text-slate-400" /> Market Question
+              </label>
+              <textarea 
+                value={question} 
+                onChange={(e) => setQuestion(e.target.value)} 
+                placeholder="e.g., Will Real Madrid win the UEFA Champions League Final in 2026?"
+                className="w-full bg-[#050a15] border border-white/10 focus:border-[#00c2ff]/50 focus:ring-1 focus:ring-[#00c2ff]/50 rounded-xl p-4 text-[14px] text-white placeholder-slate-600 outline-none h-20 transition-all resize-none shadow-inner" 
+                required 
+              />
+            </div>
 
-          {/* 🚀 3D TACTILE SUBMIT BUTTON */}
-          <button 
-            type="submit" 
-            disabled={isSubmitting} 
-            className={`
-              w-full py-3.5 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300
-              bg-gradient-to-b from-[#1a233a] to-[#0b1426]
-              border-t border-t-white/20 border-b border-b-black/80 border-l border-l-white/5 border-r border-r-white/5
-              shadow-[0_6px_15px_rgba(0,0,0,0.6),inset_0_2px_4px_rgba(255,255,255,0.05)]
-              hover:brightness-110 active:translate-y-1 active:shadow-inner
-              disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:brightness-100
-            `}
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 size={18} className="animate-spin text-slate-400" />
-                <span className="text-white font-bold text-[15px] tracking-wide">Confirming...</span>
-              </>
-            ) : (
-              <>
-                {/* Embedded the 3D Sepolia Gem icon */}
-                <Eth3DIcon size={20} className="drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]" />
-                <span className="text-white font-extrabold text-[15px] tracking-wide drop-shadow-md">
-                  Stake {REQUIRED_STAKE_ETH} ETH & Propose
-                </span>
-              </>
-            )}
-          </button>
+            {/* RESOLUTION RULES FIELD */}
+            <div className="space-y-2">
+              <label className="text-[13px] font-bold text-slate-300 flex items-center gap-2">
+                <ListChecks size={15} className="text-slate-400" /> Resolution Rules & Source
+              </label>
+              <textarea 
+                value={dataSource} 
+                onChange={(e) => setDataSource(e.target.value)} 
+                placeholder="e.g., Resolves YES if Real Madrid wins the final match. Resolves NO if they lose or fail to reach the final. Source: https://www.uefa.com/uefachampionsleague/"
+                className="w-full bg-[#050a15] border border-white/10 focus:border-[#00c2ff]/50 focus:ring-1 focus:ring-[#00c2ff]/50 rounded-xl p-4 text-[14px] text-white placeholder-slate-600 outline-none h-28 transition-all resize-none shadow-inner" 
+                required 
+              />
+            </div>
 
-        </form>
+            {/* DATE PICKER */}
+            <div className="space-y-2">
+              <label className="text-[13px] font-bold text-slate-300 flex items-center gap-2">
+                <Calendar size={15} className="text-slate-400" /> Market End Date
+              </label>
+              <input 
+                type="datetime-local" 
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="w-full bg-[#050a15] border border-white/10 focus:border-[#00c2ff]/50 focus:ring-1 focus:ring-[#00c2ff]/50 rounded-xl p-3.5 text-[14px] text-white outline-none transition-all shadow-inner [color-scheme:dark]"
+                required
+              />
+            </div>
+
+            {/* ANTI-SPAM WARNING BOX */}
+            <div className="bg-gradient-to-r from-[#ff3b5c]/10 to-transparent border border-[#ff3b5c]/20 rounded-xl p-4 flex gap-3 items-start shadow-[inset_0_1px_4px_rgba(255,59,92,0.1)]">
+              <AlertTriangle size={18} className="text-[#ff3b5c] shrink-0 mt-0.5" />
+              <p className="text-[12px] text-slate-300 leading-relaxed font-medium">
+                <strong className="text-[#ff3b5c] font-bold tracking-wide">ANTI-SPAM WARNING:</strong> Ensure your question is objective and the data source is verifiable. If the decentralized oracle nodes or community votes flag this market as spam, <span className="text-white font-bold underline decoration-[#ff3b5c]/50 decoration-2 underline-offset-2">your {REQUIRED_STAKE_ETH} ETH stake will be slashed</span> and lost.
+              </p>
+            </div>
+
+            {/* 3D TACTILE SUBMIT BUTTON */}
+            <button 
+              type="submit" 
+              disabled={isSubmitting} 
+              className={`
+                w-full py-3.5 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300
+                bg-gradient-to-b from-[#1a233a] to-[#0b1426]
+                border-t border-t-white/20 border-b border-b-black/80 border-l border-l-white/5 border-r border-r-white/5
+                shadow-[0_6px_15px_rgba(0,0,0,0.6),inset_0_2px_4px_rgba(255,255,255,0.05)]
+                hover:brightness-110 active:translate-y-1 active:shadow-inner
+                disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:brightness-100
+              `}
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 size={18} className="animate-spin text-slate-400" />
+                  <span className="text-white font-bold text-[15px] tracking-wide">Confirming...</span>
+                </>
+              ) : (
+                <>
+                  <Eth3DIcon size={20} className="drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]" />
+                  <span className="text-white font-extrabold text-[15px] tracking-wide drop-shadow-md">
+                    Stake {REQUIRED_STAKE_ETH} ETH & Propose
+                  </span>
+                </>
+              )}
+            </button>
+
+          </form>
+        )}
       </div>
     </div>
   );

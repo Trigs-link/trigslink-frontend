@@ -1,13 +1,15 @@
 import { useState, useRef, useEffect } from 'react';
-import { Search, Menu, ChevronDown, Plus, LayoutList, Settings, AlertTriangle, TrendingUp, Zap, Flame, Droplet, Clock } from 'lucide-react';
+// 🆕 Added Globe and Coins to the lucide-react imports
+import { Search, Menu, ChevronDown, Plus, LayoutList, Settings, AlertTriangle, TrendingUp, Zap, Flame, Droplet, Clock, Globe, Coins } from 'lucide-react';
 import { useAppKit, useAppKitAccount, useAppKitProvider, useAppKitNetwork } from '@reown/appkit/react';
-import { BrowserProvider, Contract, formatEther } from 'ethers'; // 🆕 Added formatEther
+import { BrowserProvider, Contract, formatEther } from 'ethers';
 import SuggestMarketModal from './SuggestMarketModal';
 import { Link } from 'react-router-dom';
 import { Bookmark } from 'lucide-react';
+import { Tooltip } from './ToolTip'; 
+
 // --- CONTRACT CONFIGURATION ---
 const TRIGS_TOKEN_ADDRESS = "0xc463bB636C67642870e2e82ebAdbd29e2C10eAFa";
-// 🆕 Added balanceOf to the ABI
 const TRIGS_TOKEN_ABI = [
   "function mintTestTokens() external",
   "function balanceOf(address account) view returns (uint256)"
@@ -69,7 +71,7 @@ export default function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMinting, setIsMinting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [trigsBalance, setTrigsBalance] = useState<string>("0"); // 🆕 State for balance
+  const [trigsBalance, setTrigsBalance] = useState<string>("0");
   
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
@@ -85,21 +87,18 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // 🆕 Function to fetch user's $TRIGS balance
   const fetchBalance = async () => {
     if (!walletProvider || !address) return;
     try {
       const ethersProvider = new BrowserProvider(walletProvider as any);
       const contract = new Contract(TRIGS_TOKEN_ADDRESS, TRIGS_TOKEN_ABI, ethersProvider);
       const balance = await contract.balanceOf(address);
-      // Format from Wei and round to 0 decimal places for a clean UI
       setTrigsBalance(Number(formatEther(balance)).toLocaleString(undefined, { maximumFractionDigits: 0 }));
     } catch (error) {
       console.error("Failed to fetch balance:", error);
     }
   };
 
-  // 🆕 Fetch balance on connect or after minting
   useEffect(() => {
     if (isConnected) fetchBalance();
   }, [isConnected, address, walletProvider, isMinting]);
@@ -119,7 +118,7 @@ export default function Navbar() {
       const tx = await trigsContract.mintTestTokens();
       await tx.wait();
       alert("Successfully minted 1,000 $TRIGS! Check your wallet.");
-      fetchBalance(); // 🆕 Refresh balance immediately after minting
+      fetchBalance(); 
     } catch (error: any) {
       if (error.code === "ACTION_REJECTED") alert("Transaction cancelled.");
       else alert("Minting failed. Make sure you have enough Sepolia ETH for the gas fee.");
@@ -184,22 +183,22 @@ export default function Navbar() {
                     <div className="grid grid-cols-2 gap-3">
                       <button className="flex items-center gap-4 p-2.5 rounded-xl border border-white/10 bg-[#111b33]/60 hover:border-white/20 hover:bg-white/10 text-left group transition-all shadow-sm">
                         <img src="https://images.unsplash.com/photo-1621416894569-0f39ed31d247?w=100&h=100&fit=crop" alt="Live Crypto" className="w-10 h-10 rounded-lg object-cover bg-black shadow-md group-hover:scale-105 transition-transform" />
-                        <span className="text-[14px] font-semibold text-slate-200 group-hover:text-white">Live Crypto</span>
+                        <span className="text-[14px] font-semibold text-slate-200 group-hover:text-white">Crypto</span>
                       </button>
                       <button className="flex items-center gap-4 p-2.5 rounded-xl border border-white/10 bg-[#111b33]/60 hover:border-white/20 hover:bg-white/10 text-left group transition-all shadow-sm">
                         <img src="https://images.unsplash.com/photo-1540910419892-4a36d2c3266c?w=100&h=100&fit=crop" alt="Politics" className="w-10 h-10 rounded-lg object-cover bg-black shadow-md group-hover:scale-105 transition-transform" />
                         <span className="text-[14px] font-semibold text-slate-200 group-hover:text-white">Politics</span>
                       </button>
                       <button className="flex items-center gap-4 p-2.5 rounded-xl border border-white/10 bg-[#111b33]/60 hover:border-white/20 hover:bg-white/10 text-left group transition-all shadow-sm">
-                        <img src="https://images.unsplash.com/photo-1582650817027-36e6328399a9?w=100&h=100&fit=crop" alt="Middle East" className="w-10 h-10 rounded-lg object-cover bg-black shadow-md group-hover:scale-105 transition-transform" />
+                        <img src="https://data1.ibtimes.co.in/en/full/818096/middle-east-where-history-power-future-collide.png?h=450&l=50&t=40?w=100&h=100&fit=crop" alt="Middle East" className="w-10 h-10 rounded-lg object-cover bg-black shadow-md group-hover:scale-105 transition-transform" />
                         <span className="text-[14px] font-semibold text-slate-200 group-hover:text-white">Middle East</span>
                       </button>
                       <button className="flex items-center gap-4 p-2.5 rounded-xl border border-white/10 bg-[#111b33]/60 hover:border-white/20 hover:bg-white/10 text-left group transition-all shadow-sm">
-                        <img src="https://images.unsplash.com/photo-1518546305927-5a555bb7020d?w=100&h=100&fit=crop" alt="Crypto" className="w-10 h-10 rounded-lg object-cover bg-black shadow-md group-hover:scale-105 transition-transform" />
-                        <span className="text-[14px] font-semibold text-slate-200 group-hover:text-white">Crypto</span>
+                        <img src="https://www.orfonline.org/public/uploads/posts/image/International-Relations.jpg?w=100&h=100&fit=crop" alt="Crypto" className="w-10 h-10 rounded-lg object-cover bg-black shadow-md group-hover:scale-105 transition-transform" />
+                        <span className="text-[14px] font-semibold text-slate-200 group-hover:text-white">International Affair</span>
                       </button>
                       <button className="flex items-center gap-4 p-2.5 rounded-xl border border-white/10 bg-[#111b33]/60 hover:border-white/20 hover:bg-white/10 text-left group transition-all shadow-sm">
-                        <img src="https://images.unsplash.com/photo-1461896836934-ffe145ab64c1?w=100&h=100&fit=crop" alt="Sports" className="w-10 h-10 rounded-lg object-cover bg-black shadow-md group-hover:scale-105 transition-transform" />
+                        <img src="https://www.lowyinstitute.org/sites/default/files/styles/interpreter_article_image/public/2025-11/GettyImages-2245476609.jpg?itok=DA4Faa0y?w=100&h=100&fit=crop" alt="Sports" className="w-10 h-10 rounded-lg object-cover bg-black shadow-md group-hover:scale-105 transition-transform" />
                         <span className="text-[14px] font-semibold text-slate-200 group-hover:text-white">Sports</span>
                       </button>
                       <button className="flex items-center gap-4 p-2.5 rounded-xl border border-white/10 bg-[#111b33]/60 hover:border-white/20 hover:bg-white/10 text-left group transition-all shadow-sm">
@@ -224,20 +223,26 @@ export default function Navbar() {
           <div className="flex items-center gap-4 justify-end">
             
             <div className="hidden lg:flex items-center gap-6 text-[13px] font-semibold text-slate-400 mr-2">
-              
-              <Link 
-                to="/governance" 
-                className={`
-                  flex items-center gap-2 px-4 py-1.5 rounded-full transition-all duration-300
-                  bg-gradient-to-b from-[#1a233a] to-[#0b1426]
-                  border-t border-t-white/20 border-b border-b-black/80 border-l border-l-white/5 border-r border-r-white/5
-                  shadow-[0_4px_10px_rgba(0,0,0,0.5),inset_0_2px_4px_rgba(255,255,255,0.05)]
-                  hover:brightness-110 active:translate-y-0.5 active:shadow-inner
-                `}
+              {/* 🌟 1. RICH TOOLTIP: VOTE ON MARKETS */}
+              <Tooltip 
+                title="Market Governance" 
+                text="Participate in governance to approve or reject new market proposals."
+                icon={<LayoutList size={16} />}
               >
-                <LayoutList size={15} className="text-[#00c2ff] drop-shadow-[0_0_5px_rgba(0,194,255,0.5)]" />
-                <span className="text-[12px] font-bold tracking-wide text-slate-200 hover:text-white">Vote on Markets</span>
-              </Link>
+                <Link 
+                  to="/governance" 
+                  className={`
+                    flex items-center gap-2 px-4 py-1.5 rounded-full transition-all duration-300
+                    bg-gradient-to-b from-[#1a233a] to-[#0b1426]
+                    border-t border-t-white/20 border-b border-b-black/80 border-l border-l-white/5 border-r border-r-white/5
+                    shadow-[0_4px_10px_rgba(0,0,0,0.5),inset_0_2px_4px_rgba(255,255,255,0.05)]
+                    hover:brightness-110 active:translate-y-0.5 active:shadow-inner
+                  `}
+                >
+                  <LayoutList size={15} className="text-[#00c2ff] drop-shadow-[0_0_5px_rgba(0,194,255,0.5)]" />
+                  <span className="text-[12px] font-bold tracking-wide text-slate-200 hover:text-white">Vote on Markets</span>
+                </Link>
+              </Tooltip>
             </div>
 
             <div className="flex items-center gap-4">
@@ -245,59 +250,76 @@ export default function Navbar() {
               {isConnected && address ? (
                 <div className="flex items-center gap-3">
                   
-                  {/* 🆕 NEW: 3D $TRIGS BALANCE PILL */}
-                  <div 
-                    className={`
-                      hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-300
-                      bg-gradient-to-b from-[#1a233a] to-[#0b1426]
-                      border-t border-t-white/20 border-b border-b-black/80 border-l border-l-white/5 border-r border-r-white/5
-                      shadow-[0_4px_10px_rgba(0,0,0,0.5),inset_0_2px_4px_rgba(255,255,255,0.05)] cursor-default
-                    `}
-                    title="Your Voting Power ($TRIGS)"
+                  {/* 🌟 2. RICH TOOLTIP: TRIGS BALANCE PILL */}
+                  <Tooltip 
+                    title="Your Voting Power" 
+                    text="This is your total $TRIGS balance used to vote on the platform."
+                    icon={<img src="/images/coin.png" alt="TRIGS" className="w-5 h-5 object-contain" />}
                   >
-                    <img src="/images/coin.png" alt="$TRIGS" className="w-[14px] h-[14px] object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]" />
-                    <span className="text-[12px] font-bold tracking-wide text-white-400 drop-shadow-md">
-                      {trigsBalance} $TRIGS
-                    </span>
-                  </div>
-
-                  {/* TACTILE 3D NETWORK PILL */}
-                  <button 
-                    onClick={() => open({ view: 'Networks' })}
-                    className={`
-                      hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-300
-                      bg-gradient-to-b from-[#1a233a] to-[#0b1426]
-                      border-t border-t-white/20 border-b border-b-black/80 border-l border-l-white/5 border-r border-r-white/5
-                      shadow-[0_4px_10px_rgba(0,0,0,0.5),inset_0_2px_4px_rgba(255,255,255,0.05)]
-                      hover:brightness-110 active:translate-y-0.5 active:shadow-inner
-                    `}
-                  >
-                    {isWrongNetwork ? <AlertTriangle size={15} className="text-red-500 drop-shadow-[0_0_5px_rgba(239,68,68,0.8)]" /> : <Eth3DIcon size={16} className="drop-shadow-lg" />}
-                    <span className={`text-[12px] font-bold tracking-wide ${isWrongNetwork ? 'text-red-400' : 'text-slate-200'}`}>
-                      {isWrongNetwork ? 'Wrong Network' : 'Sepolia'}
-                    </span>
-                  </button>
-
-                  {/* GLASSMORPHIC 3D MINT BUTTON */}
-                  <button 
-                    onClick={handleMintTrigs}
-                    disabled={isMinting || isWrongNetwork}
-                    className={`
-                      relative group hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-[13px] text-white
-                      bg-gradient-to-b from-white/10 to-[#111b33]/50 backdrop-blur-md 
-                      border border-white/20 hover:border-[#00c2ff]/50
-                      shadow-[0_4px_12px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.2)] 
-                      hover:shadow-[0_6px_20px_rgba(0,194,255,0.25),inset_0_1px_1px_rgba(255,255,255,0.4)]
-                      transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0
-                      ${isMinting || isWrongNetwork ? 'opacity-50 cursor-not-allowed transform-none hover:border-white/20 hover:shadow-none' : ''}
-                    `}
-                  >
-                    <img src="/images/coin.png" alt="$TRIGS" className={`w-6 h-6 object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] ${isMinting ? 'animate-pulse' : ''}`} />
-                    <span className="tracking-wide">{isMinting ? "Minting..." : "Mint $TRIGS"}</span>
-                    <div className="absolute inset-0 overflow-hidden rounded-xl opacity-0 group-hover:opacity-100 transition-opacity">
-                      <div className="absolute -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:animate-[shimmer_1.5s_infinite]" />
+                    <div 
+                      className={`
+                        hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-300
+                        bg-gradient-to-b from-[#1a233a] to-[#0b1426]
+                        border-t border-t-white/20 border-b border-b-black/80 border-l border-l-white/5 border-r border-r-white/5
+                        shadow-[0_4px_10px_rgba(0,0,0,0.5),inset_0_2px_4px_rgba(255,255,255,0.05)] cursor-help
+                      `}
+                    >
+                      <img src="/images/coin.png" alt="$TRIGS" className="w-[14px] h-[14px] object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]" />
+                      <span className="text-[12px] font-bold tracking-wide text-white-400 drop-shadow-md">
+                        {trigsBalance} $TRIGS
+                      </span>
                     </div>
-                  </button>
+                  </Tooltip>
+
+                  {/* 🌟 3. RICH TOOLTIP: NETWORK PILL */}
+                  <Tooltip 
+                    title="Network Status" 
+                    text={`You are connected to ${isWrongNetwork ? 'an unsupported network.' : 'Ethereum Sepolia Testnet.'}`}
+                    icon={<Globe size={16} />}
+                  >
+                    <button 
+                      onClick={() => open({ view: 'Networks' })}
+                      className={`
+                        hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-300
+                        bg-gradient-to-b from-[#1a233a] to-[#0b1426]
+                        border-t border-t-white/20 border-b border-b-black/80 border-l border-l-white/5 border-r border-r-white/5
+                        shadow-[0_4px_10px_rgba(0,0,0,0.5),inset_0_2px_4px_rgba(255,255,255,0.05)]
+                        hover:brightness-110 active:translate-y-0.5 active:shadow-inner
+                      `}
+                    >
+                      {isWrongNetwork ? <AlertTriangle size={15} className="text-red-500 drop-shadow-[0_0_5px_rgba(239,68,68,0.8)]" /> : <Eth3DIcon size={16} className="drop-shadow-lg" />}
+                      <span className={`text-[12px] font-bold tracking-wide ${isWrongNetwork ? 'text-red-400' : 'text-slate-200'}`}>
+                        {isWrongNetwork ? 'Wrong Network' : 'Sepolia'}
+                      </span>
+                    </button>
+                  </Tooltip>
+
+                  {/* 🌟 4. RICH TOOLTIP: MINT BUTTON */}
+                  <Tooltip 
+                    title="Testnet Faucet" 
+                    text="Get free testnet $TRIGS tokens to start participating in governance."
+                    icon={<Coins size={16} />}
+                  >
+                    <button 
+                      onClick={handleMintTrigs}
+                      disabled={isMinting || isWrongNetwork}
+                      className={`
+                        relative group hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-[13px] text-white
+                        bg-gradient-to-b from-white/10 to-[#111b33]/50 backdrop-blur-md 
+                        border border-white/20 hover:border-[#00c2ff]/50
+                        shadow-[0_4px_12px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.2)] 
+                        hover:shadow-[0_6px_20px_rgba(0,194,255,0.25),inset_0_1px_1px_rgba(255,255,255,0.4)]
+                        transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0
+                        ${isMinting || isWrongNetwork ? 'opacity-50 cursor-not-allowed transform-none hover:border-white/20 hover:shadow-none' : ''}
+                      `}
+                    >
+                      <img src="/images/coin.png" alt="$TRIGS" className={`w-6 h-6 object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] ${isMinting ? 'animate-pulse' : ''}`} />
+                      <span className="tracking-wide">{isMinting ? "Minting..." : "Mint $TRIGS"}</span>
+                      <div className="absolute inset-0 overflow-hidden rounded-xl opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="absolute -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:animate-[shimmer_1.5s_infinite]" />
+                      </div>
+                    </button>
+                  </Tooltip>
 
                   {/* PROFILE BUTTON & DROPDOWN */}
                   <div className="relative pl-2" ref={dropdownRef}>

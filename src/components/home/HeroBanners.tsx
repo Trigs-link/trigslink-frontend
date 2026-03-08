@@ -34,6 +34,14 @@ export default function HeroBanners() {
       imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Grand_Theft_Auto_VI_logo_%28with_gradient%29.svg/640px-Grand_Theft_Auto_VI_logo_%28with_gradient%29.svg.png",
     },
     {
+      title: "Will $LINK reach $100 by the end of 2026?",
+      subtitle: "Trade on the price action of the leading oracle network.",
+      buttonText: "CRYPTO",
+      bgGradient: "bg-gradient-to-br from-[#3b59ff] to-[#00bfff]", // Standard Blue 3
+      // Abstract digital network representing a blockchain oracle
+      imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8BLMkpRM5uL2CnjjX6sne72ClQvEG_WYijA&s"
+    },
+    {
       title: "Will Real Madrid win the Champions League?",
       subtitle: "Predict the ultimate victor of European football.",
       buttonText: "SPORTS",

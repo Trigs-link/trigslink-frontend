@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useAppKitProvider, useAppKitAccount } from '@reown/appkit/react';
 import { BrowserProvider, Contract, formatEther } from 'ethers';
-import { ThumbsUp, ThumbsDown, Clock, CheckCircle, XCircle, PlayCircle, Loader2, ListChecks, ArrowRight, User } from 'lucide-react'; 
+import { ThumbsUp, ThumbsDown, Clock, CheckCircle, XCircle, PlayCircle, Loader2, ListChecks, ArrowRight, User, Plus } from 'lucide-react'; 
 import { useLocation, useNavigate } from 'react-router-dom'; 
+
+// Import your modal (Adjust this path if your modal is in a different folder!)
+import SuggestMarketModal from '../layout/SuggestMarketModal';
 
 const GOVERNANCE_ADDRESS = "0xcacF8A1be612231414941023Db6D09Dc43d98291";
 
@@ -67,6 +70,8 @@ export default function GovernancePage() {
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(true);
   const [isVoting, setIsVoting] = useState<number | null>(null);
+  
+  const [isSuggestModalOpen, setIsSuggestModalOpen] = useState(false);
 
   const queryParams = new URLSearchParams(location.search);
   const currentTab = queryParams.get('tab') === 'my-proposals' ? 'my-proposals' : 'active';
@@ -104,7 +109,7 @@ export default function GovernancePage() {
           yesVotes: Number(formatEther(prop.yesVotes)), 
           noVotes: Number(formatEther(prop.noVotes)),
           executed: prop.executed,
-          spam: prop.isSpam, // 🛡️ Updated to match new ABI
+          spam: prop.isSpam, 
           hasUserVoted: userVoted
         });
       }
@@ -174,9 +179,28 @@ export default function GovernancePage() {
           <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 mb-3 tracking-tight">Governance Hub</h1>
           <p className="text-[#8ba0c2] text-[15px] font-medium">Stake, curate, and verify the autonomous truth engine. <span className="text-white font-bold">1 $TRIGS = 1 Vote.</span></p>
           
-          <div className="flex items-center gap-8 mt-10">
-            <button onClick={() => handleTabSwitch('active')} className={`pb-4 text-[13px] font-extrabold tracking-wide uppercase transition-all border-b-2 ${currentTab === 'active' ? 'border-[#00c2ff] text-[#00c2ff]' : 'border-transparent text-slate-500 hover:text-white'}`}>All Proposals</button>
-            <button onClick={() => handleTabSwitch('my-proposals')} className={`pb-4 text-[13px] font-extrabold tracking-wide uppercase transition-all border-b-2 ${currentTab === 'my-proposals' ? 'border-[#00c2ff] text-[#00c2ff]' : 'border-transparent text-slate-500 hover:text-white'}`}>My Proposals</button>
+          <div className="flex items-center justify-between mt-10">
+            <div className="flex items-center gap-8">
+              <button onClick={() => handleTabSwitch('active')} className={`pb-4 text-[13px] font-extrabold tracking-wide uppercase transition-all border-b-2 ${currentTab === 'active' ? 'border-[#00c2ff] text-[#00c2ff]' : 'border-transparent text-slate-500 hover:text-white'}`}>All Proposals</button>
+              <button onClick={() => handleTabSwitch('my-proposals')} className={`pb-4 text-[13px] font-extrabold tracking-wide uppercase transition-all border-b-2 ${currentTab === 'my-proposals' ? 'border-[#00c2ff] text-[#00c2ff]' : 'border-transparent text-slate-500 hover:text-white'}`}>My Proposals</button>
+            </div>
+
+            {/* 🚀 THE UPDATED 3D SUGGEST MARKET BUTTON */}
+            <button 
+              onClick={() => setIsSuggestModalOpen(true)}
+              className={`
+                flex items-center gap-2 mb-4 px-5 py-2.5 rounded-full transition-all duration-300
+                bg-gradient-to-b from-[#1a233a] to-[#0b1426]
+                border-t border-t-white/20 border-b border-b-black/80 border-l border-l-white/5 border-r border-r-white/5
+                shadow-[0_4px_10px_rgba(0,0,0,0.5),inset_0_2px_4px_rgba(255,255,255,0.05)]
+                hover:brightness-110 active:translate-y-0.5 active:shadow-inner
+              `}
+            >
+              <Plus size={16} strokeWidth={3} className="text-[#00c2ff] drop-shadow-[0_0_5px_rgba(0,194,255,0.5)]" />
+              <span className="text-white font-extrabold text-[13px] tracking-wide drop-shadow-md">
+                Suggest Market
+              </span>
+            </button>
           </div>
         </div>
       </div>
@@ -289,6 +313,8 @@ export default function GovernancePage() {
           </div>
         )}
       </div>
+
+      <SuggestMarketModal isOpen={isSuggestModalOpen} onClose={() => setIsSuggestModalOpen(false)} />
     </div>
   );
 }

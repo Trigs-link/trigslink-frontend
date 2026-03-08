@@ -8,7 +8,7 @@ export default function HeroBanners() {
       buttonText: "GEOPOLITICS",
       bgGradient: "bg-gradient-to-br from-[#2b6aff] to-[#00a3ff]", // Standard Blue 1
       // Iran Flag
-      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Flag_of_Iran_%28official%29.svg/640px-Flag_of_Iran_%28official%29.svg.png" 
+      imageUrl: "https://cdn.britannica.com/22/1722-050-B489CA11/Flag-Iran.jpg" 
     },
     // REMOVED: "Will Iran retaliate against US?"
     {
@@ -31,7 +31,7 @@ export default function HeroBanners() {
       buttonText: "GAMING",
       bgGradient: "bg-gradient-to-br from-[#2b6aff] to-[#00a3ff]", // Standard Blue 1
       // Vice City vibes
-      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Grand_Theft_Auto_VI_logo_%28with_gradient%29.svg/640px-Grand_Theft_Auto_VI_logo_%28with_gradient%29.svg.png",
+      imageUrl: "https://sundayguardianlive.com/wp-content/uploads/2026/03/gta-6-pre-orders-to-open-soon-playstation-store-leak-hints-at-pricing-editions-as-new-title-ids-appear.jpg",
     },
     {
       title: "Will $LINK reach $100 by the end of 2026?",

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Search, Menu, ChevronDown, Plus, LayoutList, Settings, AlertTriangle, TrendingUp, Zap, Flame, Droplet, Clock, Flag } from 'lucide-react';
+import { Search, Menu, ChevronDown, Plus, LayoutList, Settings, AlertTriangle, TrendingUp, Zap, Flame, Droplet, Clock } from 'lucide-react';
 import { useAppKit, useAppKitAccount, useAppKitProvider, useAppKitNetwork } from '@reown/appkit/react';
 import { BrowserProvider, Contract, formatEther } from 'ethers'; // 🆕 Added formatEther
 import SuggestMarketModal from './SuggestMarketModal';

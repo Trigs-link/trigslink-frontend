@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 // 🚩 Using Bookmark as it matches the requested flag/star shape perfectly
-import { MessageCircle, Bookmark, Pin, Loader2, Activity, CheckCircle, Trophy } from "lucide-react";
+import { Bookmark, Pin, Loader2, Activity, CheckCircle, Trophy } from "lucide-react";
 import { useAppKitProvider, useAppKitAccount } from '@reown/appkit/react';
 import { BrowserProvider, Contract } from 'ethers';
 import TradeModal from "./TradeModal";
@@ -54,7 +54,6 @@ export default function MarketCard({ marketId, question, volume, yesProb, endTim
 
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
   const [selectedOutcome, setSelectedOutcome] = useState<'YES' | 'NO'>('YES');
-  const [isActionLoading, setIsActionLoading] = useState(false);
   const [hasWinningBet, setHasWinningBet] = useState(false);
   
   // 🚩 Flag Logic: Clean lined icon that fills when clicked

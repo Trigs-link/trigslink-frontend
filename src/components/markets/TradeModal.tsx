@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { X, TrendingUp, AlertCircle, Wallet, ArrowUpDown, Loader2, BarChart3, ListChecks } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, AlertCircle, ArrowUpDown, Loader2, BarChart3, ListChecks } from 'lucide-react';
 import { useAppKitProvider } from '@reown/appkit/react';
 import { BrowserProvider, Contract, parseEther, formatEther } from 'ethers';
 

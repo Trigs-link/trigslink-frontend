@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAppKitProvider } from '@reown/appkit/react';
-import { BrowserProvider, Contract, formatEther } from 'ethers';
+import { BrowserProvider, Contract, ethers, formatEther } from 'ethers';
 import MarketCard from './MarketCard';
 import { Loader2 } from 'lucide-react';
 
@@ -105,6 +105,8 @@ export default function MarketGrid() {
           question={market.question}
           volume={market.volume}
           yesProb={market.yesProb}
+          endTime={market.endTime || 1798675200} // Added a fallback just in case
+          resolved={market.resolved || false}
         />
       ))}
     </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, AlertCircle, FileText, ListChecks, HelpCircle, Calendar } from 'lucide-react';
+import { X, FileText, ListChecks, HelpCircle, Calendar } from 'lucide-react';
 import { useAppKitProvider } from '@reown/appkit/react';
 import { BrowserProvider, Contract, parseEther } from 'ethers';
 

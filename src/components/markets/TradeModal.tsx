@@ -121,7 +121,6 @@ export default function TradeModal({ isOpen, onClose, marketId, question, yesPro
                </div>
                <div>
                   <h2 className="text-[20px] font-black text-white tracking-tight leading-none mb-1.5">Confirm Prediction</h2>
-                  <p className="text-[11px] text-slate-400 font-bold uppercase tracking-widest opacity-70">Secured On-Chain Protocol</p>
                </div>
             </div>
             <button onClick={onClose} className="text-slate-400 hover:text-white transition-all p-1.5 rounded-full hover:bg-white/5">

@@ -2,8 +2,18 @@ import { Search, TrendingUp, ChevronRight } from 'lucide-react';
 
 export default function MarketSubNav() {
   const subNavTags = [
-    "New", "Breaking News", "Trump Week 1", "Cabinet", "TikTok", "Trump 100 Days", 
-    "Israel", "Bitcoin", "Inauguration", "$TRUMP", "Middle East", "Canada", "Syria"
+    "Breaking News", 
+    "Hormuz Blockade", // Direct link to your Strait of Hormuz markets
+    "Iran-Israel Tensions", // Matches your "Will US stop war?" market
+    "GTA VI Delay",     // High-traffic gaming speculation
+    "GPT-5 Launch",     // The biggest tech narrative right now
+    "Champions League", // Real Madrid & Sports focus
+    "Oracle Networks",  // For the $LINK $100 price action
+    "Starship Mars",    // SpaceX's current mission focus
+    "Sora Video",       // AI generation news
+    "TikTok Ban Status",// The ongoing legal battle
+    "Sovereign BTC",    // Nations holding Bitcoin
+    "Oil Volatility"    // Economic impact of Middle East news
   ];
 
   return (

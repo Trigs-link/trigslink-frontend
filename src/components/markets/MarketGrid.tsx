@@ -90,7 +90,7 @@ export default function MarketGrid() {
   if (liveMarkets.length === 0) {
     return (
       <div className="bg-[#111b33] border border-white/5 rounded-2xl p-12 text-center max-w-[1000px] mx-auto mt-8 shadow-xl">
-        <p className="text-slate-400">No live markets currently active. Go propose one!</p>
+        <p className="text-slate-400">Connect your wallet to unlock live markets and start trading the future.</p>
       </div>
     );
   }
@@ -105,8 +105,8 @@ export default function MarketGrid() {
           question={market.question}
           volume={market.volume}
           yesProb={market.yesProb}
-          endTime={market.endTime || 1798675200} // Added a fallback just in case
-          resolved={market.resolved || false}
+          endTime={market.endTime} 
+          resolved={market.resolved}
         />
       ))}
     </div>

@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 // 🚩 Using Bookmark as it matches the requested flag/star shape perfectly
 import { Bookmark, Pin, Loader2, Activity, CheckCircle, Trophy } from "lucide-react";
-import { useAppKitProvider, useAppKitAccount } from '@reown/appkit/react';
+// 👇 IMPORT useAppKit HERE
+import { useAppKitProvider, useAppKitAccount, useAppKit } from '@reown/appkit/react';
 import { BrowserProvider, Contract } from 'ethers';
 import TradeModal from "./TradeModal";
 
@@ -49,7 +50,10 @@ const DynamicImage = ({ imageUrl, marketId, keyword }: { imageUrl: string, marke
 
 export default function MarketCard({ marketId, question, volume, yesProb, endTime, resolved }: MarketCardProps) {
   const { walletProvider } = useAppKitProvider('eip155');
-  const { address } = useAppKitAccount();
+  // 👇 PULL isConnected FROM ACCOUNT HOOK
+  const { address, isConnected } = useAppKitAccount();
+  // 👇 PULL open FUNCTION FROM APPKIT
+  const { open } = useAppKit(); 
   const probColor = yesProb >= 50 ? "#4ade80" : "#ff3b5c";
 
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
@@ -89,6 +93,13 @@ export default function MarketCard({ marketId, question, volume, yesProb, endTim
   // 🚩 Toggle Flag: Updates fill state and localStorage instantly
   const handleToggleFlag = (e: React.MouseEvent) => {
     e.stopPropagation();
+    
+    // 🛑 GATE: Intercept click if wallet is not connected
+    if (!isConnected) {
+      open();
+      return;
+    }
+
     const currentFlags = JSON.parse(localStorage.getItem('trigslink_flags') || '[]');
     
     let updatedFlags;
@@ -103,6 +114,12 @@ export default function MarketCard({ marketId, question, volume, yesProb, endTim
   };
 
   const openModal = (outcome: 'YES' | 'NO') => {
+    // 🛑 GATE: Intercept click if wallet is not connected
+    if (!isConnected) {
+      open();
+      return;
+    }
+
     if (isExpired) return;
     setSelectedOutcome(outcome);
     setIsTradeModalOpen(true);

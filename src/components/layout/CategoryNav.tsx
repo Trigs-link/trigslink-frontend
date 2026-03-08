@@ -1,8 +1,15 @@
 export default function CategoryNav() {
     const categories = [
-      "All", "New", "Politics", "Sports", "Crypto", 
-      "Global Elections", "Elon Tweets", "Mentions", 
-      "Creators", "Pop Culture", "Business"
+      "All", 
+      "Geopolitics",      // For US/Iran, Israel, and border tensions
+      "Global Logistics",  // For Strait of Hormuz, shipping, and supply chains
+      "Digital Assets",   // For Bitcoin, Ethereum, and $LINK price action
+      "Interactive Media", // For GTA VI, gaming industry, and streaming
+      "Artificial Intelligence", // For GPT-5, LLM breakthroughs, and Sora
+      "Professional Sports", // For Champions League and Real Madrid
+      "Aerospace",        // For Starship, Mars missions, and satellite tech
+      "Macro Economy",    // For Inflation, interest rates, and trade wars
+      "Regulatory Tech"
     ];
   
     return (

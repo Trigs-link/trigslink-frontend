@@ -1,13 +1,17 @@
 import { useState, useRef, useEffect } from 'react';
-import { Search, Menu, ChevronDown, Plus, LayoutList, Settings, AlertTriangle, TrendingUp, Zap, Flame, Droplet, Clock } from 'lucide-react';
+import { Search, Menu, ChevronDown, Plus, LayoutList, Settings, AlertTriangle, TrendingUp, Zap, Flame, Droplet, Clock, Flag } from 'lucide-react';
 import { useAppKit, useAppKitAccount, useAppKitProvider, useAppKitNetwork } from '@reown/appkit/react';
-import { BrowserProvider, Contract } from 'ethers';
+import { BrowserProvider, Contract, formatEther } from 'ethers'; // 🆕 Added formatEther
 import SuggestMarketModal from './SuggestMarketModal';
 import { Link } from 'react-router-dom';
-
+import { Bookmark } from 'lucide-react';
 // --- CONTRACT CONFIGURATION ---
 const TRIGS_TOKEN_ADDRESS = "0xc463bB636C67642870e2e82ebAdbd29e2C10eAFa";
-const TRIGS_TOKEN_ABI = ["function mintTestTokens() external"];
+// 🆕 Added balanceOf to the ABI
+const TRIGS_TOKEN_ABI = [
+  "function mintTestTokens() external",
+  "function balanceOf(address account) view returns (uint256)"
+];
 
 // --- HELPER: 3D FACETED ETHEREUM GEM ---
 const Eth3DIcon = ({ size = 16, className = "" }) => (
@@ -65,6 +69,7 @@ export default function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMinting, setIsMinting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [trigsBalance, setTrigsBalance] = useState<string>("0"); // 🆕 State for balance
   
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
@@ -80,6 +85,25 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // 🆕 Function to fetch user's $TRIGS balance
+  const fetchBalance = async () => {
+    if (!walletProvider || !address) return;
+    try {
+      const ethersProvider = new BrowserProvider(walletProvider as any);
+      const contract = new Contract(TRIGS_TOKEN_ADDRESS, TRIGS_TOKEN_ABI, ethersProvider);
+      const balance = await contract.balanceOf(address);
+      // Format from Wei and round to 0 decimal places for a clean UI
+      setTrigsBalance(Number(formatEther(balance)).toLocaleString(undefined, { maximumFractionDigits: 0 }));
+    } catch (error) {
+      console.error("Failed to fetch balance:", error);
+    }
+  };
+
+  // 🆕 Fetch balance on connect or after minting
+  useEffect(() => {
+    if (isConnected) fetchBalance();
+  }, [isConnected, address, walletProvider, isMinting]);
+
   const handleMintTrigs = async () => {
     if (!walletProvider) return;
     try {
@@ -87,7 +111,7 @@ export default function Navbar() {
       const ethersProvider = new BrowserProvider(walletProvider as any);
       const network = await ethersProvider.getNetwork();
       if (Number(network.chainId) !== 11155111) {
-        alert("The $TRIGS token is only available rn or operating on Testnet sepolia so select sepolia for miniting tokens to vote");
+        alert("The $TRIGS token is only available on Testnet Sepolia. Switch to Sepolia to mint.");
         return; 
       }
       const signer = await ethersProvider.getSigner();
@@ -95,6 +119,7 @@ export default function Navbar() {
       const tx = await trigsContract.mintTestTokens();
       await tx.wait();
       alert("Successfully minted 1,000 $TRIGS! Check your wallet.");
+      fetchBalance(); // 🆕 Refresh balance immediately after minting
     } catch (error: any) {
       if (error.code === "ACTION_REJECTED") alert("Transaction cancelled.");
       else alert("Minting failed. Make sure you have enough Sepolia ETH for the gas fee.");
@@ -128,15 +153,13 @@ export default function Navbar() {
                 />
               </div>
 
-              {/* THE NEW SEARCH DROPDOWN MENU */}
+              {/* SEARCH DROPDOWN MENU */}
               {isSearchOpen && (
                 <div className="absolute top-full left-0 right-0 mt-2 bg-[#1a233a] border border-white/10 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.8)] py-5 px-6 z-50 overflow-hidden">
-                  
                   {/* BROWSE SECTION */}
                   <div className="mb-7">
                     <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-3 pl-1">Browse</p>
                     <div className="flex flex-wrap gap-2.5">
-                      {/* Changed to rounded-xl (rectangular curved) to match inner box */}
                       <button className="flex items-center gap-2.5 pr-4 pl-1.5 py-1.5 rounded-xl border border-white/10 bg-[#111b33]/80 hover:bg-white/10 text-[13px] font-semibold text-slate-300 hover:text-white transition-colors group shadow-sm">
                         <MiniJewelBox><Zap size={14} className="text-white drop-shadow-sm" /></MiniJewelBox> New
                       </button>
@@ -159,71 +182,85 @@ export default function Navbar() {
                   <div>
                     <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-3 pl-1">Topics</p>
                     <div className="grid grid-cols-2 gap-3">
-                      
-                      {/* Added visible borders and solid background to make them look like cards */}
                       <button className="flex items-center gap-4 p-2.5 rounded-xl border border-white/10 bg-[#111b33]/60 hover:border-white/20 hover:bg-white/10 text-left group transition-all shadow-sm">
                         <img src="https://images.unsplash.com/photo-1621416894569-0f39ed31d247?w=100&h=100&fit=crop" alt="Live Crypto" className="w-10 h-10 rounded-lg object-cover bg-black shadow-md group-hover:scale-105 transition-transform" />
                         <span className="text-[14px] font-semibold text-slate-200 group-hover:text-white">Live Crypto</span>
                       </button>
-                      
                       <button className="flex items-center gap-4 p-2.5 rounded-xl border border-white/10 bg-[#111b33]/60 hover:border-white/20 hover:bg-white/10 text-left group transition-all shadow-sm">
                         <img src="https://images.unsplash.com/photo-1540910419892-4a36d2c3266c?w=100&h=100&fit=crop" alt="Politics" className="w-10 h-10 rounded-lg object-cover bg-black shadow-md group-hover:scale-105 transition-transform" />
                         <span className="text-[14px] font-semibold text-slate-200 group-hover:text-white">Politics</span>
                       </button>
-
                       <button className="flex items-center gap-4 p-2.5 rounded-xl border border-white/10 bg-[#111b33]/60 hover:border-white/20 hover:bg-white/10 text-left group transition-all shadow-sm">
                         <img src="https://images.unsplash.com/photo-1582650817027-36e6328399a9?w=100&h=100&fit=crop" alt="Middle East" className="w-10 h-10 rounded-lg object-cover bg-black shadow-md group-hover:scale-105 transition-transform" />
                         <span className="text-[14px] font-semibold text-slate-200 group-hover:text-white">Middle East</span>
                       </button>
-
                       <button className="flex items-center gap-4 p-2.5 rounded-xl border border-white/10 bg-[#111b33]/60 hover:border-white/20 hover:bg-white/10 text-left group transition-all shadow-sm">
                         <img src="https://images.unsplash.com/photo-1518546305927-5a555bb7020d?w=100&h=100&fit=crop" alt="Crypto" className="w-10 h-10 rounded-lg object-cover bg-black shadow-md group-hover:scale-105 transition-transform" />
                         <span className="text-[14px] font-semibold text-slate-200 group-hover:text-white">Crypto</span>
                       </button>
-
                       <button className="flex items-center gap-4 p-2.5 rounded-xl border border-white/10 bg-[#111b33]/60 hover:border-white/20 hover:bg-white/10 text-left group transition-all shadow-sm">
                         <img src="https://images.unsplash.com/photo-1461896836934-ffe145ab64c1?w=100&h=100&fit=crop" alt="Sports" className="w-10 h-10 rounded-lg object-cover bg-black shadow-md group-hover:scale-105 transition-transform" />
                         <span className="text-[14px] font-semibold text-slate-200 group-hover:text-white">Sports</span>
                       </button>
-
                       <button className="flex items-center gap-4 p-2.5 rounded-xl border border-white/10 bg-[#111b33]/60 hover:border-white/20 hover:bg-white/10 text-left group transition-all shadow-sm">
                         <img src="https://images.unsplash.com/photo-1603190287605-e6ade32fa852?w=100&h=100&fit=crop" alt="Pop Culture" className="w-10 h-10 rounded-lg object-cover bg-black shadow-md group-hover:scale-105 transition-transform" />
                         <span className="text-[14px] font-semibold text-slate-200 group-hover:text-white">Pop Culture</span>
                       </button>
-
                       <button className="flex items-center gap-4 p-2.5 rounded-xl border border-white/10 bg-[#111b33]/60 hover:border-white/20 hover:bg-white/10 text-left group transition-all shadow-sm">
                         <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=100&h=100&fit=crop" alt="Tech" className="w-10 h-10 rounded-lg object-cover bg-black shadow-md group-hover:scale-105 transition-transform" />
                         <span className="text-[14px] font-semibold text-slate-200 group-hover:text-white">Tech</span>
                       </button>
-
                       <button className="flex items-center gap-4 p-2.5 rounded-xl border border-white/10 bg-[#111b33]/60 hover:border-white/20 hover:bg-white/10 text-left group transition-all shadow-sm">
                         <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=100&h=100&fit=crop" alt="AI" className="w-10 h-10 rounded-lg object-cover bg-black shadow-md group-hover:scale-105 transition-transform" />
                         <span className="text-[14px] font-semibold text-slate-200 group-hover:text-white">AI</span>
                       </button>
-                      
                     </div>
                   </div>
-
                 </div>
               )}
             </div>
           </div>
 
-          <div className="flex items-center gap-6 justify-end">
+          <div className="flex items-center gap-4 justify-end">
             
-            <div className="hidden lg:flex items-center gap-5 text-[13px] font-semibold text-slate-400">
-              <span className="hover:text-white cursor-pointer transition-colors">Ranks</span>
-              <span className="hover:text-white cursor-pointer transition-colors">Activity</span>
-              <span className="hover:text-white cursor-pointer transition-colors">Sports</span>
-              <Link to="/governance" className="hover:text-white cursor-pointer transition-colors">Governance</Link>
-              <span className="hover:text-white cursor-pointer transition-colors">Markets</span>
+            <div className="hidden lg:flex items-center gap-6 text-[13px] font-semibold text-slate-400 mr-2">
+              
+              <Link 
+                to="/governance" 
+                className={`
+                  flex items-center gap-2 px-4 py-1.5 rounded-full transition-all duration-300
+                  bg-gradient-to-b from-[#1a233a] to-[#0b1426]
+                  border-t border-t-white/20 border-b border-b-black/80 border-l border-l-white/5 border-r border-r-white/5
+                  shadow-[0_4px_10px_rgba(0,0,0,0.5),inset_0_2px_4px_rgba(255,255,255,0.05)]
+                  hover:brightness-110 active:translate-y-0.5 active:shadow-inner
+                `}
+              >
+                <LayoutList size={15} className="text-[#00c2ff] drop-shadow-[0_0_5px_rgba(0,194,255,0.5)]" />
+                <span className="text-[12px] font-bold tracking-wide text-slate-200 hover:text-white">Vote on Markets</span>
+              </Link>
             </div>
 
             <div className="flex items-center gap-4">
               
               {isConnected && address ? (
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
                   
+                  {/* 🆕 NEW: 3D $TRIGS BALANCE PILL */}
+                  <div 
+                    className={`
+                      hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-300
+                      bg-gradient-to-b from-[#1a233a] to-[#0b1426]
+                      border-t border-t-white/20 border-b border-b-black/80 border-l border-l-white/5 border-r border-r-white/5
+                      shadow-[0_4px_10px_rgba(0,0,0,0.5),inset_0_2px_4px_rgba(255,255,255,0.05)] cursor-default
+                    `}
+                    title="Your Voting Power ($TRIGS)"
+                  >
+                    <img src="/images/coin.png" alt="$TRIGS" className="w-[14px] h-[14px] object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]" />
+                    <span className="text-[12px] font-bold tracking-wide text-white-400 drop-shadow-md">
+                      {trigsBalance} $TRIGS
+                    </span>
+                  </div>
+
                   {/* TACTILE 3D NETWORK PILL */}
                   <button 
                     onClick={() => open({ view: 'Networks' })}
@@ -292,6 +329,13 @@ export default function Navbar() {
                             <LayoutList size={14} className="text-white drop-shadow-md" />
                           </JewelBox>
                           <span className="text-[14px] font-semibold text-slate-300 group-hover:text-white transition-colors">My Proposals</span>
+                        </Link>
+
+                        <Link to="/watchlist" onClick={() => setIsDropdownOpen(false)} className="w-full text-left px-5 py-3 flex items-center gap-4 transition-colors group hover:bg-white/5">
+                          <JewelBox>
+                            <Bookmark size={16} className="text-white fill-transparent group-hover:fill-white transition-all duration-300" />
+                          </JewelBox>
+                          <span className="text-[14px] font-semibold text-slate-300 group-hover:text-white transition-colors">Watchlist</span>
                         </Link>
 
                         <button onClick={() => { open(); setIsDropdownOpen(false); }} className="w-full text-left px-5 py-3 flex items-center gap-4 transition-colors group hover:bg-white/5">

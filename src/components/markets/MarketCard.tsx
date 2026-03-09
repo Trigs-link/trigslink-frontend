@@ -7,7 +7,7 @@ import { BrowserProvider, Contract } from 'ethers';
 import TradeModal from "./TradeModal";
 
 // 🔄 VAULT CONFIGURATION
-const VAULT_ADDRESS = "0xb0A1Aa0bfE5aAd4dC1AE84008Ecb89d4Ecc3bD7F";
+const VAULT_ADDRESS = "0xb989aaB780ae15E3820f8d97aE84D1bBB91914D2";
 const VAULT_ABI = [
   "function requestSettlement(string _marketId) external",
   "function claimWinnings(string _marketId) external",

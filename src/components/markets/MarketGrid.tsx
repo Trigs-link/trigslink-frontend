@@ -4,8 +4,8 @@ import { BrowserProvider, Contract, ethers, formatEther } from 'ethers';
 import MarketCard from './MarketCard';
 import { Loader2 } from 'lucide-react';
 
-const GOVERNANCE_ADDRESS = "0xcacF8A1be612231414941023Db6D09Dc43d98291";
-const VAULT_ADDRESS = "0xb0A1Aa0bfE5aAd4dC1AE84008Ecb89d4Ecc3bD7F";
+const GOVERNANCE_ADDRESS = "0xA3c6E2b06B3c511d52e7682Ba0Aec234F2BA692a";
+const VAULT_ADDRESS = "0xb989aaB780ae15E3820f8d97aE84D1bBB91914D2";
 
 const GOVERNANCE_ABI = [
   "function proposalCount() view returns (uint256)",

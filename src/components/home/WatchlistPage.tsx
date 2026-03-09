@@ -5,7 +5,7 @@ import { BrowserProvider, Contract, formatEther } from 'ethers';
 import MarketCard from '../markets/MarketCard'; 
 
 // 🔄 VAULT CONFIGURATION
-const VAULT_ADDRESS = "0xb0A1Aa0bfE5aAd4dC1AE84008Ecb89d4Ecc3bD7F";
+const VAULT_ADDRESS = "0xb989aaB780ae15E3820f8d97aE84D1bBB91914D2";
 const VAULT_ABI = [
   "function markets(string) view returns (string marketId, bool resolved, uint8 finalOutcome, uint256 totalPool, uint256 outcome1Pool, uint256 outcome2Pool, string question, string dataSource, uint256 endTime)"
 ];

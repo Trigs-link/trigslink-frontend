@@ -7,7 +7,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 // Import your modal (Adjust this path if your modal is in a different folder!)
 import SuggestMarketModal from '../layout/SuggestMarketModal';
 
-const GOVERNANCE_ADDRESS = "0xcacF8A1be612231414941023Db6D09Dc43d98291";
+const GOVERNANCE_ADDRESS = "0xA3c6E2b06B3c511d52e7682Ba0Aec234F2BA692a";
 
 // 🛡️ THE FIXED ABI
 const GOVERNANCE_ABI = [

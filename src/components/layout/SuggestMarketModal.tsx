@@ -18,7 +18,7 @@ const Eth3DIcon = ({ size = 18, className = "" }) => (
 );
 
 // 🔄 UPDATED TO V2
-const GOVERNANCE_ADDRESS = "0xcacF8A1be612231414941023Db6D09Dc43d98291";
+const GOVERNANCE_ADDRESS = "0xA3c6E2b06B3c511d52e7682Ba0Aec234F2BA692a";
 const REQUIRED_STAKE_ETH = "0.05"; 
 
 // 🔄 UPDATED ABI with _marketEndTime
